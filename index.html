@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Aerial photography and cinematic drone video for estate agents, Airbnb hosts, venues and events across West Sussex.">
+<title>West Sussex Drone Service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#f2efe8; --ink-soft:#98a0a9; --line:#262c33;
+    --paper:#0b0e12; --paper-raise:#151a20;
+    --gold:#ffb020; --gold-deep:#d98f0d; --gold-bright:#ffc65c;
+    font-size:16px; color-scheme:dark;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; line-height:1.55;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  h1,h2,h3{font-family:'Big Shoulders Display',sans-serif; font-weight:700; letter-spacing:.005em; margin:0; color:var(--ink);}
+  a{color:inherit;}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 28px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  /* Header */
+  header{position:sticky; top:0; z-index:10; background:var(--paper); border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top,0px);}
+  .nav{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:18px;}
+  .logotype{font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:1.3rem; letter-spacing:.01em;}
+  .logotype span{color:var(--gold-deep);}
+  nav.links{display:flex; gap:28px; font-size:.92rem;}
+  nav.links a{text-decoration:none; color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px;}
+  nav.links a:hover{border-color:var(--gold);}
+  .book-btn{background:transparent; border:1px solid var(--gold); color:var(--gold); padding:8px 17px; border-radius:2px; text-decoration:none; font-size:.88rem; white-space:nowrap;}
+  .book-btn:hover{background:var(--gold); color:var(--paper);}
+  @media(max-width:720px){ nav.links{display:none;} }
+
+  /* Hero */
+  .hero{padding:88px 0 70px; position:relative; overflow:hidden;}
+  .hero-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:48px; align-items:center;}
+  @media(max-width:800px){.hero-grid{grid-template-columns:1fr;}}
+  .hero h1{font-size:clamp(2.3rem,5vw,3.5rem); line-height:1.05; max-width:11ch;}
+  .hero p.lede{color:var(--ink-soft); font-size:1.08rem; max-width:44ch; margin-top:20px;}
+  .hero-cta{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;}
+  .btn-primary{background:var(--gold-deep); color:#fff; padding:13px 24px; text-decoration:none; border-radius:2px; font-size:.94rem;}
+  .btn-primary:hover{background:var(--gold-bright);}
+  .btn-ghost{border:1px solid var(--line); color:var(--ink); padding:13px 24px; text-decoration:none; border-radius:2px; font-size:.94rem;}
+  .btn-ghost:hover{border-color:var(--gold);}
+  .flightpath{width:100%; height:auto;}
+
+  /* Section headers */
+  .section{padding:64px 0; border-top:1px solid var(--line);}
+  .kicker{color:var(--gold-deep); font-size:.85rem; margin-bottom:8px;}
+  .section h2{font-size:1.9rem; max-width:20ch; margin-bottom:14px;}
+  .section p.intro{color:var(--ink-soft); max-width:56ch;}
+
+  /* Equipment */
+  .equip-grid{display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:36px;}
+  @media(max-width:680px){.equip-grid{grid-template-columns:1fr;}}
+  .equip-card{border:1px solid var(--line); padding:26px; background:var(--paper-raise);}
+  .equip-photo{display:block; width:calc(100% + 52px); max-width:none; margin:-26px -26px 20px; aspect-ratio:4/3; object-fit:cover;}
+  .equip-card .equip-hint{display:none; color:var(--gold-deep); font-size:.8rem; margin:14px 0 0;}
+  /* On devices with a mouse, the photo stays hidden until the card is hovered or focused. Touch screens keep it visible. */
+  @media (hover:hover){
+    .equip-grid{align-items:start;}
+    .equip-card{cursor:default;}
+    .equip-card .equip-photo{max-height:0; opacity:0; margin:0 -26px 0; transition:max-height .45s ease, opacity .35s ease, margin .45s ease;}
+    .equip-card:hover .equip-photo, .equip-card:focus-within .equip-photo, .equip-card:focus .equip-photo{max-height:420px; opacity:1; margin:-26px -26px 20px;}
+    .equip-card .equip-hint{display:block; transition:opacity .25s ease;}
+    .equip-card:hover .equip-hint, .equip-card:focus .equip-hint{opacity:0;}
+    .equip-card:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  }
+  @media (prefers-reduced-motion:reduce){ .equip-card .equip-photo, .equip-hint{transition:none;} }
+  .equip-card h3{font-size:1.2rem; margin-bottom:8px;}
+  .equip-card p{color:var(--ink-soft); font-size:.94rem; margin:0;}
+
+  /* Pricing tabs */
+  .tabs{display:flex; gap:8px; margin:34px 0 28px; flex-wrap:wrap;}
+  .tab{border:1px solid var(--line); background:transparent; color:var(--ink-soft); padding:9px 16px; font-size:.88rem; cursor:pointer; font-family:'Inter',sans-serif;}
+  .tab.active{background:var(--gold); color:var(--paper); border-color:var(--gold);}
+  .pane{display:none;}
+  .pane.active{display:block;}
+  table{width:100%; border-collapse:collapse; font-size:.92rem;}
+  table.col-fixed{table-layout:fixed;}
+  table.col-fixed th:first-child, table.col-fixed td:first-child{width:22%;}
+  table.col-fixed th:last-child, table.col-fixed td:last-child{width:22%;}
+  th{text-align:left; font-weight:600; color:var(--ink-soft); font-size:.8rem; padding:10px 12px; border-bottom:1px solid var(--line);}
+  td{padding:14px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
+  tr td:last-child, tr th:last-child{text-align:right; white-space:nowrap; font-weight:500;}
+  .sub-table-title{font-size:1.02rem; margin:30px 0 10px; color:var(--ink);}
+  .overflow{overflow-x:auto;}
+  .fine{color:var(--ink-soft); font-size:.85rem; margin-top:22px;}
+  .tbc{color:var(--gold-deep);}
+
+  /* Addons */
+  .addon-list{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:0 32px;}
+  @media(max-width:680px){.addon-list{grid-template-columns:1fr;}}
+  .addon-list li{display:flex; justify-content:space-between; gap:16px; padding:13px 0; border-bottom:1px solid var(--line); font-size:.93rem;}
+  .addon-list li span:last-child{font-weight:500; white-space:nowrap;}
+
+  /* Policies */
+  .policy-list{display:grid; gap:18px; margin-top:30px;}
+  .policy-row{display:grid; grid-template-columns:170px 1fr; gap:20px; padding-bottom:18px; border-bottom:1px solid var(--line);}
+  @media(max-width:600px){.policy-row{grid-template-columns:1fr;}}
+  .policy-row strong{font-size:.9rem;}
+  .policy-row p{margin:0; color:var(--ink-soft); font-size:.92rem;}
+
+  /* Portfolio placeholder */
+  .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:34px;}
+  @media(max-width:680px){.gallery{grid-template-columns:1fr 1fr;}}
+  .plate{aspect-ratio:4/3; background:linear-gradient(135deg,var(--paper-raise),var(--paper)); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--ink-soft); font-size:.8rem; text-align:center; padding:10px; overflow:hidden;}
+  .plate.filled{padding:0; position:relative;}
+  .plate.filled img{width:100%; height:100%; object-fit:cover; display:block;}
+  .plate-label{position:absolute; left:10px; bottom:9px; font-size:.72rem; color:#fff; background:rgba(11,14,18,.55); padding:3px 9px; border-radius:2px; letter-spacing:.02em; z-index:1;}
+  .plate-link{flex-direction:column; gap:8px; text-decoration:none; cursor:pointer;}
+  .plate-link:hover{border-color:var(--gold); color:var(--ink);}
+  .plate-arrow{font-size:.72rem; color:var(--gold-deep);}
+  .plate.filled{cursor:pointer;}
+  .plate.filled img, .plate.filled video{transition:transform .35s ease;}
+  .plate.filled video{width:100%; height:100%; object-fit:cover; display:block; pointer-events:none;}
+  .plate.filled:hover img, .plate.filled:focus-visible img,
+  .plate.filled:hover video, .plate.filled:focus-visible video{transform:scale(1.08);}
+  .plate.filled:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  .plate-play{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:52px; height:52px; border-radius:50%; background:rgba(11,14,18,.55); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.1rem; padding-left:3px; z-index:1;}
+
+  /* Lightbox */
+  .lightbox{position:fixed; inset:0; background:rgba(6,8,11,.94); display:none; align-items:center; justify-content:center; z-index:100; padding:24px; padding:calc(24px + env(safe-area-inset-top,0px)) 24px calc(24px + env(safe-area-inset-bottom,0px));}
+  .lightbox.open{display:flex;}
+  .lb-figure{margin:0; max-width:min(1100px,92vw); max-height:86vh; display:flex; flex-direction:column; align-items:center; gap:14px;}
+  .lb-figure img, .lb-figure video{max-width:100%; max-height:78vh; object-fit:contain; border-radius:2px;}
+  .lb-figure figcaption{color:var(--ink-soft); font-size:.88rem; letter-spacing:.02em;}
+  .lb-close{position:absolute; top:calc(18px + env(safe-area-inset-top,0px)); right:18px; background:none; border:none; color:#fff; font-size:2rem; line-height:1; cursor:pointer; padding:6px 10px;}
+  .lb-close:hover{color:var(--gold);}
+  .lb-arrow{position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.06); border:1px solid var(--line); color:#fff; font-size:2rem; line-height:1; width:52px; height:52px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .lb-arrow:hover{background:var(--gold); border-color:var(--gold); color:var(--paper);}
+  .lb-prev{left:18px;}
+  .lb-next{right:18px;}
+  @media(max-width:640px){
+    .lb-arrow{width:42px; height:42px; font-size:1.6rem;}
+    .lb-prev{left:8px;} .lb-next{right:8px;}
+  }
+
+  /* Contact */
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:34px;}
+  @media(max-width:720px){.contact-grid{grid-template-columns:1fr;}}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:.82rem; color:var(--ink-soft); margin-bottom:6px;}
+  .field input, .field select, .field textarea{
+    width:100%; padding:11px 12px; border:1px solid var(--line); background:var(--paper);
+    color:var(--ink); font-family:'Inter',sans-serif; font-size:.94rem; border-radius:2px;
+  }
+  .field textarea{resize:vertical; min-height:90px;}
+  .form-note{font-size:.85rem; color:var(--ink-soft); margin-top:14px;}
+  .consult-box{background:var(--paper-raise); border:1px solid var(--line); padding:26px;}
+  .consult-box h3{font-size:1.15rem; margin-bottom:10px;}
+  .consult-box p{color:var(--ink-soft); font-size:.93rem; margin:0 0 18px;}
+
+  footer{border-top:1px solid var(--line); padding:32px 0; font-size:.85rem; color:var(--ink-soft); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));}
+  /* Terms view. Layout: contents rail on the left, numbered clauses on the right, built from the site's existing tokens. */
+  a:focus-visible, button:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  nav.links a.current{color:var(--ink); border-color:var(--gold);}
+  .fine a{color:var(--gold-deep);}
+  .foot-link{color:var(--ink-soft); text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:1px;}
+  .foot-link:hover{color:var(--ink); border-color:var(--gold);}
+
+  .terms{padding-block:56px 76px;}
+  .terms-back{display:inline-block; font-size:.85rem; color:var(--ink-soft); text-decoration:none; margin-bottom:26px; border-bottom:1px solid transparent; padding-bottom:2px;}
+  .terms-back:hover{border-color:var(--gold); color:var(--ink);}
+  .terms h1{font-size:clamp(2.1rem,4.6vw,3rem); line-height:1.05; text-wrap:balance;}
+  .terms-status{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin-top:18px; color:var(--ink-soft); font-size:.9rem;}
+  .terms-intro{color:var(--ink-soft); max-width:60ch; margin:16px 0 0;}
+  .chip{display:inline-block; border:1px solid var(--line); color:var(--ink-soft); font-family:'Inter',sans-serif; font-weight:500; font-size:.66rem; letter-spacing:.09em; text-transform:uppercase; padding:3px 8px; border-radius:2px; white-space:nowrap; line-height:1.5;}
+  .chip.gold{border-color:var(--gold-deep); color:var(--gold);}
+
+  .terms-layout{display:grid; grid-template-columns:210px minmax(0,1fr); gap:56px; margin-top:48px; align-items:start;}
+  .terms-toc{position:sticky; top:calc(env(safe-area-inset-top,0px) + 96px); font-size:.88rem;}
+  .terms-toc-label{color:var(--ink-soft); font-size:.72rem; letter-spacing:.09em; text-transform:uppercase; margin:0 0 14px;}
+  .terms-toc ol{list-style:none; margin:0; padding:0; display:grid; gap:10px;}
+  .terms-toc a{display:grid; grid-template-columns:1.5rem minmax(0,1fr); text-decoration:none; color:var(--ink-soft);}
+  .terms-toc a:hover{color:var(--ink);}
+  .terms-toc .n{color:var(--gold-deep); font-variant-numeric:tabular-nums;}
+  .terms-body{display:grid; gap:46px; min-width:0; max-width:68ch;}
+  @media(max-width:800px){
+    .terms-layout{grid-template-columns:minmax(0,1fr); gap:34px; margin-top:36px;}
+    .terms-toc{position:static; border:1px solid var(--line); background:var(--paper-raise); padding:18px 20px;}
+  }
+
+  .clause-group{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 92px); min-width:0;}
+  .clause-group h2{font-size:1.5rem; display:flex; gap:6px 14px; align-items:center; flex-wrap:wrap; margin-bottom:6px;}
+  .clause-group h2 .n{color:var(--gold-deep); font-variant-numeric:tabular-nums;}
+  .clause-scope{color:var(--ink-soft); font-size:.86rem; margin:0;}
+  .clauses{list-style:none; margin:14px 0 0; padding:0;}
+  .clauses li{display:grid; grid-template-columns:2.7rem minmax(0,1fr); gap:0 6px; padding:13px 0; border-bottom:1px solid var(--line); font-size:.95rem;}
+  .clauses li:first-child{border-top:1px solid var(--line);}
+  .clauses .n{color:var(--ink-soft); font-size:.82rem; font-variant-numeric:tabular-nums; padding-top:2px;}
+  .clauses strong{font-weight:600;}
+
+  .draft-box{border:1px dashed var(--gold-deep); background:var(--paper-raise); padding:22px 24px 8px; margin-top:16px;}
+  .draft-note{font-size:.92rem; margin:0; max-width:58ch;}
+  .draft-key{display:grid; gap:8px; font-size:.84rem; color:var(--ink-soft); margin:14px 0 0;}
+  .draft-key div{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .decision{border-top:1px solid var(--line); margin-top:20px; padding-top:18px;}
+  .decision h3{font-family:'Inter',sans-serif; font-size:.97rem; font-weight:600; letter-spacing:0; display:grid; grid-template-columns:2.7rem minmax(0,1fr); gap:0 6px;}
+  .decision h3 .n{color:var(--gold-deep); font-weight:500; font-size:.82rem; font-variant-numeric:tabular-nums; padding-top:2px;}
+  .options{list-style:none; margin:8px 0 0; padding:0 0 0 calc(2.7rem + 6px);}
+  .options li{display:grid; grid-template-columns:1.7rem minmax(0,1fr) auto; gap:4px 10px; align-items:start; padding:8px 0; font-size:.92rem; color:var(--ink-soft);}
+  .options .l{color:var(--ink); font-weight:500;}
+  .draft-foot{border-top:1px solid var(--line); margin-top:20px; padding:16px 0 14px; font-size:.9rem; color:var(--ink-soft);}
+  .draft-foot p{margin:0 0 10px;}
+  .draft-foot strong{color:var(--ink); font-weight:600;}
+  .to-come{margin:14px 0 0; padding-left:18px; color:var(--ink-soft); font-size:.93rem;}
+  .to-come li{margin-bottom:7px;}
+  @media(max-width:560px){
+    .draft-box{padding:18px 16px 6px;}
+    .options{padding-left:0;}
+    .options li{grid-template-columns:1.7rem minmax(0,1fr);}
+    .options .chip{grid-column:2; justify-self:start;}
+  }
+</style>
+<style>[hidden]{display:none !important;}</style>
+</head>
+<body>
+<header id="top">
+  <div class="wrap nav">
+    <div class="logotype">West Sussex <span>Drone</span> Service</div>
+    <nav class="links">
+      <a href="#services">Equipment</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#policies">Policies</a>
+      <a href="#terms" data-terms-link>Terms</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#contact" class="book-btn">Book a consultation</a>
+  </div>
+</header>
+
+<main id="siteView">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>Elevate your perspective</h1>
+      <p class="lede">Aerial photography and cinematic drone video for estate agents, Airbnb hosts, venues and events across West Sussex.</p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn-primary">Free Zoom consultation</a>
+        <a href="#pricing" class="btn-ghost">See pricing</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="kicker">Equipment</div>
+    <h2>Two aircraft, two kinds of shot</h2>
+    <p class="intro">Every job is matched to the right platform — close, dynamic FPV movement or stable cinematic aerials — rather than one drone stretched to cover both.</p>
+    <div class="equip-grid">
+      <div class="equip-card" tabindex="0">
+        <img class="equip-photo" src="media/drone-avata2.jpg" alt="DJI Avata 2 hovering over a field at dusk with the moon behind" loading="lazy">
+        <h3>DJI Avata 2</h3>
+        <p>Flown for immersive, close-proximity FPV footage — sweeping through doorways, along façades and low over ground level. Best suited to dynamic property walk-throughs and energetic event coverage.</p>
+        <p class="equip-hint">Hover to see it in flight</p>
+      </div>
+      <div class="equip-card" tabindex="0">
+        <img class="equip-photo" src="media/drone-cinematic.jpg" alt="DJI Mini 3 in flight against a dusk sky" loading="lazy">
+        <h3>DJI Cinematic Drones</h3>
+        <p>Used for stable wide aerials and high-resolution stills — full-property overviews, venue showcases and elevated establishing shots for listings and marketing.</p>
+        <p class="equip-hint">Hover to see it in flight</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="kicker">Pricing</div>
+    <h2>Packages &amp; subscriptions</h2>
+    <p class="intro">This is a working price list — figures marked <span class="tbc">£TBC</span> are still being finalised. Every booking starts with a free Zoom consultation to walk through flight plan ideas before you commit to anything.</p>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-pane="subs">Monthly subscriptions</button>
+      <button class="tab" data-pane="oneoff">One-off packages</button>
+      <button class="tab" data-pane="addons">Add-ons</button>
+    </div>
+
+    <div class="pane active" id="subs">
+      <p class="fine" style="margin-top:0;">For repeat clients — estate agents, event venues. Pick how often you need us, then how much editing each shoot gets.</p>
+
+      <div class="sub-table-title">Starter — 3 shoots/month</div>
+      <div class="overflow"><table>
+        <tr><th>Deliverable per shoot</th><th>Price</th></tr>
+        <tr><td>Standard — 10 photos + short clip (15s)</td><td>£345/month (£115/shoot)</td></tr>
+        <tr><td>Deluxe — 20 photos + highlight reel (45s)</td><td>£525/month (£175/shoot)</td></tr>
+        <tr><td>Premium — all usable shots + full edit (1–3 min)</td><td>£915/month (£305/shoot)</td></tr>
+      </table></div>
+
+      <div class="sub-table-title">Growth — 5 shoots/month</div>
+      <div class="overflow"><table>
+        <tr><th>Deliverable per shoot</th><th>Price</th></tr>
+        <tr><td>Standard — 10 photos + short clip (15s)</td><td>£650/month (£130/shoot)</td></tr>
+        <tr><td>Deluxe — 20 photos + highlight reel (45s)</td><td>£1,000/month (£200/shoot)</td></tr>
+        <tr><td>Premium — all usable shots + full edit (1–3 min)</td><td>£1,725/month (£345/shoot)</td></tr>
+      </table></div>
+
+      <div class="sub-table-title">Partner — 7-shoot monthly minimum</div>
+      <div class="overflow"><table>
+        <tr><th>Deliverable per shoot</th><th>Monthly minimum (7 shoots)</th><th>Each additional shoot</th></tr>
+        <tr><td>Standard — 10 photos + short clip (15s)</td><td>£840/month (£120/shoot)</td><td>£120/shoot</td></tr>
+        <tr><td>Deluxe — 20 photos + highlight reel (45s)</td><td>£1,295/month (£185/shoot)</td><td>£185/shoot</td></tr>
+        <tr><td>Premium — all usable shots + full edit (1–3 min)</td><td>£2,275/month (£325/shoot)</td><td>£325/shoot</td></tr>
+      </table></div>
+
+      <p class="fine">Partner is billed for a 7-shoot minimum each month, whether all 7 are used or not, with every shoot beyond that billed at the same per-shoot rate — no cap on volume. Every subscription has a 3-month minimum term, and unused shoots do not roll over. The full details are in the <a href="#terms">terms and conditions</a>.</p>
+    </div>
+
+    <div class="pane" id="oneoff">
+      <p class="fine" style="margin-top:0;">For Airbnbs, single events and individual clients.</p>
+
+      <div class="sub-table-title">Footage packages — photos + video</div>
+      <div class="overflow"><table>
+        <tr><th>Tier</th><th>Photos</th><th>Video</th><th>Best for</th><th>Price</th></tr>
+        <tr><td>Standard</td><td>10 edited photos</td><td>Short clip (15s)</td><td>Quick property / Airbnb listing</td><td>£150</td></tr>
+        <tr><td>Deluxe</td><td>20 edited photos</td><td>Highlight reel (45s)</td><td>Estate agents, Airbnb social content</td><td>£230</td></tr>
+        <tr><td>Premium</td><td>All usable shots</td><td>All usable footage + full edited video (1–3 min)</td><td>Weddings, venue showcases</td><td>£400</td></tr>
+      </table></div>
+
+      <div class="sub-table-title">Photo only</div>
+      <div class="overflow"><table class="col-fixed">
+        <tr><th>Tier</th><th>Photos</th><th>Price</th></tr>
+        <tr><td>Standard</td><td>10 edited photos</td><td>£110</td></tr>
+        <tr><td>Deluxe</td><td>20 edited photos</td><td>£170</td></tr>
+        <tr><td>Premium</td><td>All usable shots</td><td>£280</td></tr>
+      </table></div>
+
+      <div class="sub-table-title">Video only</div>
+      <div class="overflow"><table class="col-fixed">
+        <tr><th>Tier</th><th>Video</th><th>Price</th></tr>
+        <tr><td>Standard</td><td>Short clip (15s)</td><td>£90</td></tr>
+        <tr><td>Deluxe</td><td>Highlight reel (45s)</td><td>£140</td></tr>
+        <tr><td>Premium</td><td>All usable footage + full edited video (1–3 min)</td><td>£280</td></tr>
+      </table></div>
+
+      <p class="fine"><strong>Portfolio use discount:</strong> agree to let WSDS use a defined selection of your footage for portfolio/marketing and get 5% off your package price (e.g. £500 → £475). Available to every client, including weddings and personal events.</p>
+    </div>
+
+    <div class="pane" id="addons">
+      <p class="fine" style="margin-top:0;">Add-ons apply to either subscriptions or one-off packages. Caps are in place so add-ons can't be stacked to match the next tier's deliverable for less — if you need more, it's time to upgrade the package.</p>
+      <ul class="addon-list">
+        <li><span>Rush turnaround (priority scheduling, no fixed time guarantee)</span><span>£25</span></li>
+        <li><span>Raw / unedited footage handover</span><span>£15</span></li>
+        <li><span>Day hire (multiple visits same day)</span><span>£40</span></li>
+        <li><span>Golden-hour shoot</span><span>+£15</span></li>
+        <li><span>Early dawn shoot</span><span>+£20</span></li>
+        <li><span>Additional photos (max +5)</span><span>£5 each</span></li>
+        <li><span>Extra video length (max +15s)</span><span>£2/second</span></li>
+        <li><span>360° interactive aerial panorama</span><span>£30</span></li>
+        <li><span>Labelled aerial photo (plot boundary, nearby landmarks and distances)</span><span>£10 each</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="portfolio">
+  <div class="wrap">
+    <div class="kicker">Portfolio</div>
+    <h2>Recent work</h2>
+    <p class="intro">A growing gallery of selected stills and highlight reels from recent shoots.</p>
+    <div class="gallery">
+      <div class="plate">Property aerial</div>
+      <div class="plate">Venue showcase</div>
+      <div class="plate filled" tabindex="0" role="button" aria-label="View Airbnb listing photo full screen" data-lightbox-index="0">
+        <img src="media/airbnb-listing.jpg" alt="Aerial autumn view of a countryside Airbnb property surrounded by woodland" loading="lazy">
+        <span class="plate-label">Airbnb listing</span>
+      </div>
+      <div class="plate filled" tabindex="0" role="button" aria-label="View wedding photo full screen" data-lightbox-index="1">
+        <img src="media/wedding.jpg" alt="Aerial view of a wedding reception by a pool at a countryside venue" loading="lazy">
+        <span class="plate-label">Wedding</span>
+      </div>
+      <div class="plate filled" tabindex="0" role="button" aria-label="View golden hour photo full screen" data-lightbox-index="2">
+        <img src="media/golden-hour.jpg" alt="Golden-hour sunset over the West Sussex coast, shot on location" loading="lazy">
+        <span class="plate-label">Golden hour</span>
+      </div>
+      <div class="plate filled plate-video" tabindex="0" role="button" aria-label="Play FPV over water showreel full screen" data-lightbox-index="3" data-type="video">
+        <video muted loop playsinline preload="metadata" poster="media/fpv-over-water-poster.jpg" src="media/fpv-over-water.mp4"></video>
+        <span class="plate-label">FPV over water</span>
+      </div>
+      <div class="plate filled plate-video" tabindex="0" role="button" aria-label="Play Days out showreel full screen" data-lightbox-index="4" data-type="video">
+        <video muted loop playsinline preload="metadata" poster="media/days-out-poster.jpg" src="media/days-out.mp4"></video>
+        <span class="plate-label">Days out</span>
+      </div>
+      <div class="plate filled plate-video" tabindex="0" role="button" aria-label="Play Rowing regatta showreel full screen" data-lightbox-index="5" data-type="video">
+        <video muted loop playsinline preload="metadata" poster="media/rowing-regatta-poster.jpg" src="media/rowing-regatta.mp4"></video>
+        <span class="plate-label">Rowing regatta</span>
+      </div>
+      <a class="plate plate-link" href="https://www.skypixel.com/photo360s/check-out-my-new-content-0e12f26e-2dcb-4290-96a7-6168cab9946d" target="_blank" rel="noopener">360° panorama<span class="plate-arrow">View on SkyPixel ↗</span></a>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lb-close" id="lbClose" aria-label="Close">&times;</button>
+    <button class="lb-arrow lb-prev" id="lbPrev" aria-label="Previous photo">&#8249;</button>
+    <figure class="lb-figure">
+      <img id="lbImage" src="" alt="">
+      <video id="lbVideo" controls loop playsinline></video>
+      <figcaption id="lbCaption"></figcaption>
+    </figure>
+    <button class="lb-arrow lb-next" id="lbNext" aria-label="Next photo">&#8250;</button>
+  </div>
+</section>
+
+<section class="section" id="policies">
+  <div class="wrap">
+    <div class="kicker">Policies</div>
+    <h2>Good to know before booking</h2>
+    <div class="policy-list">
+      <div class="policy-row">
+        <strong>Insurance &amp; qualification</strong>
+        <p id="insuranceNote">WSDS holds a UK CAA Flyer ID and Operator ID and is qualified to fly commercially.</p>
+      </div>
+      <div class="policy-row">
+        <strong>Weather</strong>
+        <p>Free reschedule if conditions aren't safe to fly — no cancellation fee. If conditions turn mid-shoot and WSDS has to leave and return another day, no return call-out fee is charged. Each drone's wind resistance is explained during the free Zoom consultation. Wind speed on site is measured with a handheld wind meter, and if it exceeds those limits during a session, WSDS must stop flying unless conditions are expected to calm down later that day.</p>
+      </div>
+      <div class="policy-row">
+        <strong>Licensing</strong>
+        <p>WSDS keeps the copyright in all footage. Once you have paid in full, you can use your footage for your own marketing or personal use, with no time limit. The full wording is in the <a href="#terms-copyright" style="color:var(--gold-deep);">terms and conditions</a>.</p>
+      </div>
+      <div class="policy-row">
+        <strong>Rescheduling</strong>
+        <p>Free of charge. If WSDS has already arrived on site for the shoot when you reschedule, the £10 return call-out fee applies, on one-off jobs and subscriptions alike.</p>
+      </div>
+      <div class="policy-row">
+        <strong>Cancelling</strong>
+        <p>Free of charge before the shoot. If you cancel while WSDS is on site, the £10 return call-out fee applies. If you cancel after the shoot, you are charged half the package price.</p>
+      </div>
+      <div class="policy-row">
+        <strong>Travel</strong>
+        <p>Included for shoots in West Sussex. Further afield, travel is charged at 20p per mile for the miles beyond the West Sussex border, there and back.</p>
+      </div>
+      <div class="policy-row">
+        <strong>Return call-outs</strong>
+        <p>£10 fee if a one-off job requires WSDS to return to site. Subscription clients are not charged, other than for an on-site reschedule.</p>
+      </div>
+      <div class="policy-row">
+        <strong>Site hazards</strong>
+        <p>WSDS will ask about power lines, overhead cables and any other potential hazards near the property or flying area during the Zoom consultation, so the flight can be planned around them safely.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="wrap contact-grid">
+    <div>
+      <div class="kicker">Get in touch</div>
+      <h2>Start with a free consultation</h2>
+      <p class="intro" style="margin-bottom:24px;">Every enquiry begins with a free Zoom call — a walkthrough of flight plan ideas and a chance to talk through what you have in mind before any package or subscription is booked.</p>
+      <form name="enquiry" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field" id="enquiryForm">
+        <input type="hidden" name="form-name" value="enquiry">
+        <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+        <div class="field"><label for="name">Name</label><input id="name" name="name" type="text" required autocomplete="name" placeholder="Your name"></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+        <div class="field"><label for="type">What you need</label><input id="type" name="need" type="text" required placeholder="e.g. subscription for a venue, one-off Airbnb shoot, photo only…"></div>
+        <div class="field">
+          <label for="w3w">Property location (what3words)</label>
+          <input id="w3w" name="w3w" type="text" placeholder="e.g. ///filled.count.soap — or N/A if you'd rather not share yet">
+          <p class="form-note" style="margin-top:6px;">Don't know your what3words? Find it at <a href="https://what3words.com/map" target="_blank" rel="noopener" style="color:var(--gold-deep); text-decoration:underline;">what3words.com/map</a>.</p>
+        </div>
+        <div class="field"><label for="msg">Anything else?</label><textarea id="msg" name="message" placeholder="Preferred date and what you'd like captured"></textarea></div>
+        <button type="submit" class="btn-primary" id="sendEnquiry" style="border:0; cursor:pointer; font-family:'Inter',sans-serif;">Request consultation</button>
+        <p class="form-note" id="enquiryStatus" role="status" aria-live="polite">We reply by email, usually within a day. Prefer to get in touch directly? Email <a href="mailto:westsussexdroneservice@gmail.com" style="color:var(--gold-deep); text-decoration:underline;">westsussexdroneservice@gmail.com</a> or call 07984&nbsp;164149.</p>
+      </form>
+    </div>
+    <div class="consult-box">
+      <h3>What to expect on the call</h3>
+      <p>A short, no-pressure conversation covering:</p>
+      <ul style="color:var(--ink-soft); font-size:.93rem; padding-left:18px; margin:0;">
+        <li style="margin-bottom:8px;">Your property, venue or event, and what you want the footage for</li>
+        <li style="margin-bottom:8px;">A walkthrough of possible flight plans and angles</li>
+        <li style="margin-bottom:8px;">Which package or subscription tier fits best</li>
+        <li>Weather contingency and scheduling</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<main id="termsView" hidden>
+  <div class="wrap terms">
+    <a class="terms-back" href="#top">&larr; Back to the main site</a>
+    <h1>Terms and conditions</h1>
+    <div class="terms-status">
+      <span class="chip gold">Working draft</span>
+      <span>Last updated 7 October 2026. Not yet in force.</span>
+    </div>
+    <p class="terms-intro">These are the terms for working with West Sussex Drone Service. Sections 1 to 9 are settled. Section 10, on refunds, is still being decided and lists every option under consideration.</p>
+
+    <div class="terms-layout">
+      <nav class="terms-toc" aria-label="Terms contents">
+        <p class="terms-toc-label">Contents</p>
+        <ol>
+          <li><a href="#terms-subscriptions"><span class="n">1</span><span>Subscriptions</span></a></li>
+          <li><a href="#terms-payment"><span class="n">2</span><span>Payment, minimum term and cancelling</span></a></li>
+          <li><a href="#terms-unused"><span class="n">3</span><span>Unused shoots</span></a></li>
+          <li><a href="#terms-weather"><span class="n">4</span><span>Weather</span></a></li>
+          <li><a href="#terms-callouts"><span class="n">5</span><span>Rescheduling, cancelling and return call-outs</span></a></li>
+          <li><a href="#terms-travel"><span class="n">6</span><span>Travel</span></a></li>
+          <li><a href="#terms-addons"><span class="n">7</span><span>Add-ons</span></a></li>
+          <li><a href="#terms-portfolio"><span class="n">8</span><span>Portfolio use discount</span></a></li>
+          <li><a href="#terms-copyright"><span class="n">9</span><span>Copyright and use of footage</span></a></li>
+          <li><a href="#terms-refunds"><span class="n">10</span><span>Refunds on subscriptions</span></a></li>
+          <li><a href="#terms-tocome"><span class="n">11</span><span>Still to be added</span></a></li>
+        </ol>
+      </nav>
+
+      <div class="terms-body">
+
+        <section class="clause-group" id="terms-subscriptions">
+          <h2><span class="n">1</span>Subscriptions</h2>
+          <ol class="clauses">
+            <li><span class="n">1.1</span><span>Subscriptions are billed monthly. Starter includes 3 shoots a month, Growth includes 5, and Partner has a 7-shoot monthly minimum with each further shoot at the same per-shoot rate.</span></li>
+            <li><span class="n">1.2</span><span>Partner is billed for the 7-shoot minimum every month, whether or not all 7 shoots are used.</span></li>
+            <li><span class="n">1.3</span><span>Subscriptions are open to everyone, whether you are a business or an individual.</span></li>
+          </ol>
+        </section>
+
+        <section class="clause-group" id="terms-payment">
+          <h2><span class="n">2</span>Payment, minimum term and cancelling</h2>
+          <p class="clause-scope">Applies to every subscription: Starter, Growth and Partner.</p>
+          <ol class="clauses">
+            <li><span class="n">2.1</span><span><strong>Payment in advance.</strong> Each month is paid before any of that month's shoots take place. Your payment reserves our days and your shoots for that month.</span></li>
+            <li><span class="n">2.2</span><span><strong>Minimum term.</strong> Every subscription runs for at least 3 months.</span></li>
+            <li><span class="n">2.3</span><span><strong>No notice period.</strong> After the minimum term you can stop at any time before your next payment is due. Your subscription then ends at the end of the month you have already paid for.</span></li>
+            <li><span class="n">2.4</span><span><strong>Late payment.</strong> If a payment is late, we do not send any footage until the payment has been received.</span></li>
+            <li><span class="n">2.5</span><span><strong>Your payment date does not move.</strong> After a late payment, the next one is still due on the original day of the following month.</span></li>
+            <li><span class="n">2.6</span><span><strong>After 7 days.</strong> If a payment has not been received within 7 days of the date it was due, the footage we are holding is deleted.</span></li>
+          </ol>
+        </section>
+
+        <section class="clause-group" id="terms-unused">
+          <h2><span class="n">3</span>Unused shoots</h2>
+          <p class="clause-scope">Applies to every subscription: Starter, Growth and Partner.</p>
+          <ol class="clauses">
+            <li><span class="n">3.1</span><span><strong>Unused shoots do not roll over.</strong> Any shoots not used by the end of the month are lost.</span></li>
+            <li><span class="n">3.2</span><span><strong>Exception.</strong> A shoot that does not happen because of the weather, or because we were not available, carries over to the following month.</span></li>
+          </ol>
+        </section>
+
+        <section class="clause-group" id="terms-weather">
+          <h2><span class="n">4</span>Weather</h2>
+          <ol class="clauses">
+            <li><span class="n">4.1</span><span>If conditions are unsafe to fly, we reschedule free of charge. There is no cancellation fee.</span></li>
+            <li><span class="n">4.2</span><span>If we have to leave mid-shoot because of the weather and return another day, there is no return call-out fee.</span></li>
+          </ol>
+        </section>
+
+        <section class="clause-group" id="terms-callouts">
+          <h2><span class="n">5</span>Rescheduling, cancelling and return call-outs</h2>
+          <ol class="clauses">
+            <li><span class="n">5.1</span><span><strong>Rescheduling is free.</strong> You can move a shoot to another date at no charge.</span></li>
+            <li><span class="n">5.2</span><span><strong>Rescheduling once we are on site.</strong> If we have already arrived for the shoot when you reschedule, the £10 return call-out fee applies. This covers one-off jobs and subscriptions.</span></li>
+            <li><span class="n">5.3</span><span><strong>Cancelling is free.</strong> You can cancel a shoot at no charge.</span></li>
+            <li><span class="n">5.4</span><span><strong>Cancelling while we are on site.</strong> If we are on site for the shoot when you cancel, the £10 return call-out fee applies.</span></li>
+            <li><span class="n">5.5</span><span><strong>Cancelling after the shoot.</strong> If you cancel after the shoot, once we have left the site, you are charged half the package price.</span></li>
+            <li><span class="n">5.6</span><span><strong>Return call-outs.</strong> A £10 fee applies if we have to return to site on a one-off job. Subscription clients are not charged this fee, except under 5.2.</span></li>
+          </ol>
+        </section>
+
+        <section class="clause-group" id="terms-travel">
+          <h2><span class="n">6</span>Travel</h2>
+          <ol class="clauses">
+            <li><span class="n">6.1</span><span><strong>Inside West Sussex.</strong> Travel is included in the price.</span></li>
+            <li><span class="n">6.2</span><span><strong>Outside West Sussex.</strong> Travel is charged at 20p per mile, counting only the miles beyond the West Sussex border, there and back.</span></li>
+          </ol>
+        </section>
+
+        <section class="clause-group" id="terms-addons">
+          <h2><span class="n">7</span>Add-ons</h2>
+          <ol class="clauses">
+            <li><span class="n">7.1</span><span>Additional photos are £5 each, up to 5 per package.</span></li>
+            <li><span class="n">7.2</span><span>Extra video length is £2 per second, up to 15 seconds per package.</span></li>
+            <li><span class="n">7.3</span><span>The limits are there so add-ons cannot be stacked to match the next tier for less. If you need more, the next package up is the better fit.</span></li>
+          </ol>
+        </section>
+
+        <section class="clause-group" id="terms-portfolio">
+          <h2><span class="n">8</span>Portfolio use discount</h2>
+          <ol class="clauses">
+            <li><span class="n">8.1</span><span>You get 5% off your package price if you let us use a defined selection of your footage for our portfolio and marketing.</span></li>
+            <li><span class="n">8.2</span><span>The discount is open to every client, including weddings and personal events.</span></li>
+            <li><span class="n">8.3</span><span><strong>You choose what we use.</strong> We send you the footage we would like to use, and we only use what you approve.</span></li>
+            <li><span class="n">8.4</span><span><strong>If nothing is approved.</strong> If you do not allow us to use any of the footage, the discount no longer applies.</span></li>
+          </ol>
+        </section>
+
+        <section class="clause-group" id="terms-copyright">
+          <h2><span class="n">9</span>Copyright and use of footage</h2>
+          <ol class="clauses">
+            <li><span class="n">9.1</span><span><strong>Ownership.</strong> West Sussex Drone Service owns the copyright in all photos and video we produce, including raw and unedited footage. Paying for a shoot does not transfer the copyright to you.</span></li>
+            <li><span class="n">9.2</span><span><strong>Your licence.</strong> Once you have paid in full, you may use the delivered footage for your own purposes, with no time limit. For a business, this means your own marketing: listings, website, social media, print and advertising. For an individual, this means personal use, including sharing it and posting it on your own social media.</span></li>
+            <li><span class="n">9.3</span><span><strong>Unpaid footage.</strong> You may not use any footage until it has been paid for in full.</span></li>
+            <li><span class="n">9.4</span><span><strong>What is not allowed.</strong> Without our written agreement, you may not sell the footage, license it to anyone else, or pass it to another person or business to use for their own purposes.</span></li>
+            <li><span class="n">9.5</span><span><strong>Use outside these terms.</strong> If footage is used in a way these terms do not allow, we may ask for it to be removed and charge a licence fee for the use.</span></li>
+            <li><span class="n">9.6</span><span><strong>Our use.</strong> We only use your footage in our own portfolio and marketing where you have approved it under the portfolio use discount.</span></li>
+            <li><span class="n">9.7</span><span><strong>We do not pass it on.</strong> We will not sell or license your footage to anyone else without your agreement.</span></li>
+            <li><span class="n">9.8</span><span><strong>Music.</strong> We edit videos to music we are licensed to use. If you want a specific copyrighted song, you must first send us written permission from the rights holder covering its use with video and on the platforms where you plan to post it. You are responsible for that permission, and for any claim or cost arising if it does not cover the use. We may decline to use a song if we are not satisfied with the permission, and will offer licensed music or a version without music.</span></li>
+          </ol>
+        </section>
+
+        <section class="clause-group" id="terms-refunds">
+          <h2><span class="n">10</span>Refunds on subscriptions <span class="chip gold">Options, not decided</span></h2>
+          <p class="clause-scope">Applies to every subscription: Starter, Growth and Partner.</p>
+          <div class="draft-box">
+            <p class="draft-note">Nothing in this section is final. Each numbered point is one decision, with every rule under consideration listed beneath it. One option per point will go into the finished terms.</p>
+            <div class="draft-key">
+              <div><span class="chip">Current draft</span><span>The rule as first drafted</span></div>
+              <div><span class="chip gold">Suggested</span><span>The option recommended in review</span></div>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.1</span><span>What triggers a refund</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>A valid reason, not defined.</span><span class="chip">Current draft</span></li>
+                <li><span class="l">(b)</span><span>Only when nothing has been delivered yet.</span></li>
+                <li><span class="l">(c)</span><span>A booked shoot we do not carry out, for any reason on our side: weather, availability, equipment, airspace or permissions.</span><span class="chip gold">Suggested</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.2</span><span>How much comes back</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>The whole month's payment.</span><span class="chip">Current draft</span></li>
+                <li><span class="l">(b)</span><span>Only the value of the missed shoots: the monthly fee divided by the shoots in your tier, £115 to £345 each.</span><span class="chip gold">Suggested</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.3</span><span>Time limit</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>You apply within 14 days of us receiving that month's payment.</span><span class="chip">Current draft</span></li>
+                <li><span class="l">(b)</span><span>No application needed for missed shoots. Faulty footage must be raised within 14 days of receiving it.</span><span class="chip gold">Suggested</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.4</span><span>Once a shoot has been delivered</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>No refund at all for that month.</span><span class="chip">Current draft</span></li>
+                <li><span class="l">(b)</span><span>Delivered work is never refunded, but missed shoots in that month still are.</span><span class="chip gold">Suggested</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.5</span><span>Cash or credit</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>A cash refund.</span></li>
+                <li><span class="l">(b)</span><span>A credit on your next invoice. Cash only if your subscription has ended, paid within 14 days.</span><span class="chip gold">Suggested</span></li>
+                <li><span class="l">(c)</span><span>Credit only, never cash.</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.6</span><span>Carried-over shoots</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>Carry over to the following month, with nothing said about what happens after that.</span><span class="chip">Current draft</span></li>
+                <li><span class="l">(b)</span><span>Made up by the end of the following month. If not, turned into a credit.</span><span class="chip gold">Suggested</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.7</span><span>Faulty footage</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>Nothing stated.</span><span class="chip">Current draft</span></li>
+                <li><span class="l">(b)</span><span>A free re-edit or re-shoot. If that does not fix it, it counts as a missed shoot.</span><span class="chip gold">Suggested</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.8</span><span>Stopping payment inside the 3-month minimum term</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>You can cancel the next month's payment at any time. This cancels out the minimum term.</span><span class="chip">Current draft</span></li>
+                <li><span class="l">(b)</span><span>The minimum term is firm, with no exceptions.</span></li>
+                <li><span class="l">(c)</span><span>Firm, except that you can leave if we miss booked shoots two months running, with owed shoots refunded.</span><span class="chip gold">Suggested</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.9</span><span>First-month way out</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>None in the terms. New clients are pointed to a one-off shoot first.</span><span class="chip gold">Suggested</span></li>
+                <li><span class="l">(b)</span><span>You can leave after the first shoot, paying the one-off price for it and getting the balance back.</span></li>
+                <li><span class="l">(c)</span><span>A one-off shoot first, with its price counted towards month one if you subscribe within 30 days.</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.10</span><span>Full refund after the minimum term, where nothing is booked or delivered and you ask within 14 days of paying</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>Keep.</span></li>
+                <li><span class="l">(b)</span><span>Drop.</span><span class="chip gold">Suggested</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.11</span><span>Leaving early for your own reasons</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>You still owe the remaining months of the minimum term, and can still use the shoots.</span><span class="chip gold">Suggested</span></li>
+                <li><span class="l">(b)</span><span>Left undecided until a solicitor has looked at it.</span></li>
+              </ol>
+            </div>
+
+            <div class="decision">
+              <h3><span class="n">10.12</span><span>Individual clients, buying for personal use and not for a business</span></h3>
+              <ol class="options">
+                <li><span class="l">(a)</span><span>Add a short paragraph: if you sign up online, by phone or at your property, you can cancel within 14 days of signing up, paying only for shoots already carried out. Your legal rights are not affected.</span><span class="chip gold">Suggested</span></li>
+                <li><span class="l">(b)</span><span>Say nothing. The legal rights apply anyway.</span></li>
+              </ol>
+            </div>
+
+            <div class="draft-foot">
+              <p><strong>Not refunded under any option:</strong> work already delivered, shoots you did not book, and a change of mind after the first 14 days.</p>
+              <p><strong>Two numbers still needed:</strong> how quickly footage is returned (suggested starting point, 5 working days) and how much notice makes a shoot booked (suggested starting point, 48 hours).</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="clause-group" id="terms-tocome">
+          <h2><span class="n">11</span>Still to be added <span class="chip">To come</span></h2>
+          <ul class="to-come">
+            <li>Payment terms and deposits for one-off jobs</li>
+          </ul>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;">
+    <span>West Sussex Drone Service</span>
+    <a class="foot-link" href="#terms">Terms and conditions</a>
+    <span>Serving West Sussex &amp; surrounding areas</span>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.tab').forEach(function(tab){
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.pane').forEach(function(p){ p.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.pane).classList.add('active');
+  });
+});
+
+(function(){
+  var tiles = Array.prototype.slice.call(document.querySelectorAll('.plate.filled[data-lightbox-index]'));
+  if (!tiles.length) return;
+
+  var items = tiles.map(function(tile){
+    var isVideo = tile.getAttribute('data-type') === 'video';
+    var media = tile.querySelector(isVideo ? 'video' : 'img');
+    return {
+      type: isVideo ? 'video' : 'image',
+      src: media.getAttribute('src'),
+      alt: isVideo ? '' : media.getAttribute('alt'),
+      poster: isVideo ? media.getAttribute('poster') : null,
+      label: (tile.querySelector('.plate-label') || {}).textContent || ''
+    };
+  });
+
+  // Muted preview plays only while the mouse (or keyboard focus) is on the tile,
+  // looping continuously for as long as that lasts.
+  tiles.forEach(function(tile){
+    var vid = tile.querySelector('video');
+    if (!vid) return;
+    tile.addEventListener('mouseenter', function(){ vid.play().catch(function(){}); });
+    tile.addEventListener('mouseleave', function(){ vid.pause(); });
+    tile.addEventListener('focus', function(){ vid.play().catch(function(){}); });
+    tile.addEventListener('blur', function(){ vid.pause(); });
+  });
+
+  var lightbox = document.getElementById('lightbox');
+  var lbImage = document.getElementById('lbImage');
+  var lbVideo = document.getElementById('lbVideo');
+  var lbCaption = document.getElementById('lbCaption');
+  var lbClose = document.getElementById('lbClose');
+  var lbPrev = document.getElementById('lbPrev');
+  var lbNext = document.getElementById('lbNext');
+  var current = 0;
+  var lastFocused = null;
+
+  function show(index){
+    lbVideo.pause();
+    current = (index + items.length) % items.length;
+    var item = items[current];
+    if (item.type === 'video'){
+      lbImage.style.display = 'none';
+      lbVideo.style.display = '';
+      lbVideo.setAttribute('src', item.src);
+      if (item.poster) lbVideo.setAttribute('poster', item.poster);
+      lbVideo.play().catch(function(){});
+    } else {
+      lbVideo.style.display = 'none';
+      lbVideo.removeAttribute('src');
+      lbImage.style.display = '';
+      lbImage.setAttribute('src', item.src);
+      lbImage.setAttribute('alt', item.alt);
+    }
+    lbCaption.textContent = item.label;
+  }
+
+  function open(index){
+    lastFocused = document.activeElement;
+    show(index);
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    lbClose.focus();
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close(){
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    lbImage.setAttribute('src', '');
+    lbVideo.pause();
+    lbVideo.removeAttribute('src');
+    document.body.style.overflow = '';
+    if (lastFocused && lastFocused.focus) lastFocused.focus();
+  }
+
+  tiles.forEach(function(tile, i){
+    tile.addEventListener('click', function(){ open(i); });
+    tile.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(i); }
+    });
+  });
+
+  lbClose.addEventListener('click', close);
+  lbPrev.addEventListener('click', function(){ show(current - 1); });
+  lbNext.addEventListener('click', function(){ show(current + 1); });
+  lightbox.addEventListener('click', function(e){ if (e.target === lightbox) close(); });
+
+  document.addEventListener('keydown', function(e){
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(current - 1);
+    if (e.key === 'ArrowRight') show(current + 1);
+  });
+})();
+// Enquiry form: posts to Netlify Forms without leaving the page.
+(function(){
+  var form = document.getElementById('enquiryForm');
+  var btn = document.getElementById('sendEnquiry');
+  var status = document.getElementById('enquiryStatus');
+  if (!form || !btn) return;
+  var defaultNote = status ? status.innerHTML : '';
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch('/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams(new FormData(form)).toString()
+    }).then(function(r){
+      if (!r.ok) throw new Error('bad status');
+      form.reset();
+      btn.textContent = 'Request sent';
+      if (status){ status.textContent = 'Thanks, your enquiry is in. We will reply by email, usually within a day.'; status.style.color = 'var(--gold)'; }
+    }).catch(function(){
+      btn.disabled = false; btn.textContent = 'Request consultation';
+      if (status){ status.innerHTML = 'Sorry, that did not send. Please email <a href="mailto:westsussexdroneservice@gmail.com" style="color:var(--gold-deep); text-decoration:underline;">westsussexdroneservice@gmail.com</a> or call 07984&nbsp;164149.'; status.style.color = 'var(--gold)'; }
+    });
+  });
+})();
+// Insurance line: the insurance statement only appears from 10 November 2026 (UK date), when the policy starts.
+(function(){
+  var el = document.getElementById('insuranceNote');
+  if (!el) return;
+  var today;
+  try { today = new Intl.DateTimeFormat('en-CA', {timeZone:'Europe/London', year:'numeric', month:'2-digit', day:'2-digit'}).format(new Date()); }
+  catch (e) { var d = new Date(); today = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2); }
+  if (today >= '2026-11-10') {
+    el.textContent = 'WSDS holds a UK CAA Flyer ID and Operator ID, is qualified to fly commercially, and is fully insured, with public, products and aviation liability cover that includes invasion of privacy and data liability.';
+  }
+})();
+// Terms view: "#terms" (or any "#terms-..." section) shows the terms page; anything else shows the main site.
+(function(){
+  var site = document.getElementById('siteView');
+  var terms = document.getElementById('termsView');
+  if (!site || !terms) return;
+  function route(hash){
+    var h = (hash == null ? (location.hash || '') : hash).replace('#','');
+    var isTerms = h === 'terms' || h.indexOf('terms-') === 0;
+    site.hidden = isTerms;
+    terms.hidden = !isTerms;
+    document.querySelectorAll('[data-terms-link]').forEach(function(a){ a.classList.toggle('current', isTerms); });
+    var target = (h && h !== 'terms' && h !== 'top') ? document.getElementById(h) : null;
+    if (target) { target.scrollIntoView(); } else { window.scrollTo(0, 0); }
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (href.length < 2) return;
+    setTimeout(function(){ route(href); }, 0);
+  });
+  window.addEventListener('hashchange', function(){ route(); });
+  if (location.hash) route();
+})();
+</script>
+</body>
+</html>
