@@ -58,13 +58,13 @@
   .hero-copy{position:relative; z-index:1;}
   .hero h1{font-size:clamp(2.3rem,5vw,3.5rem); line-height:1.05; max-width:11ch;}
 
-  /* Hero drone: a top-down Avata 2 hovers beside the heading; scrolling flies it up and out of the
-     banner and turns its propellers. Drawn on a canvas by the script. */
-  .drone-canvas{position:absolute; left:0; top:0; width:100%; height:100%; z-index:2; pointer-events:none; visibility:hidden; animation:drone-bob 3.4s ease-in-out infinite;}
+  /* Equipment drone: a top-down Avata 2 rises out of the bottom of the Equipment section as you scroll,
+     climbing up through it and out of the top, propellers turning. Drawn on a canvas by the script. */
+  #services{position:relative;}
+  #services > .wrap{position:relative; z-index:1;}
+  .drone-canvas{position:absolute; left:0; top:0; width:100%; height:100%; z-index:2; pointer-events:none; visibility:hidden;}
   .drone-ready .drone-canvas{visibility:visible;}
-  @keyframes drone-bob{0%,100%{transform:translateY(-2px);} 50%{transform:translateY(2px);}}
-  @media(max-width:800px){ html.has-drone .hero{padding-bottom:calc(min(62vw, 300px) * 0.875 + 56px);} }
-  @media (prefers-reduced-motion:reduce){ .drone-canvas{animation:none;} }
+  @media (prefers-reduced-motion:reduce){ .drone-canvas{display:none;} }
   .hero p.lede{color:var(--ink-soft); font-size:1.08rem; max-width:44ch; margin-top:20px;}
   .hero-cta{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;}
   .btn-primary{background:var(--gold-deep); color:#fff; padding:13px 24px; text-decoration:none; border-radius:2px; font-size:.94rem;}
@@ -243,7 +243,7 @@
   }
 </style>
 <style>[hidden]{display:none !important;}</style>
-<script>try{var c=document.documentElement.classList;c.add('has-drone');if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)c.add('swoop');}catch(e){}</script>
+<script>try{var c=document.documentElement.classList;if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)c.add('swoop');}catch(e){}</script>
 </head>
 <body>
 <header id="top">
@@ -275,7 +275,6 @@
       </div>
     </div>
   </div>
-  <canvas class="drone-canvas" aria-hidden="true"></canvas>
 </section>
 
 <section class="section" id="services">
@@ -298,6 +297,7 @@
       </div>
     </div>
   </div>
+  <canvas class="drone-canvas" aria-hidden="true"></canvas>
 </section>
 
 <section class="section" id="pricing">
@@ -916,18 +916,18 @@ document.querySelectorAll('.tab').forEach(function(tab){
     el.textContent = 'WSDS holds a UK CAA Flyer ID and Operator ID, is qualified to fly commercially, and is fully insured, with public, products and aviation liability cover that includes invasion of privacy and data liability.';
   }
 })();
-// Hero drone: a top-down Avata 2, nose up, hovers beside the heading. Scrolling down flies it up and out
-// of the banner, and its propellers turn with the scroll. It is drawn on a canvas so the movement can
-// carry a slight motion blur (several moments of the movement are averaged). With reduced motion it stays put.
+// Equipment drone: a top-down Avata 2, nose up, rises out of the bottom of the Equipment section once
+// that edge is on screen and climbs up through the section and out of the top as you scroll, propellers turning.
+// It is drawn on a canvas so the movement can carry a slight motion blur (several moments of the movement
+// are averaged). With reduced motion it isn't shown.
 (function(){
   var root = document.documentElement;
-  var hero = document.getElementById('hero');
+  var hero = document.getElementById('services');   // the section the drone flies through
   var canvas = hero ? hero.querySelector('.drone-canvas') : null;
   var ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
   if (!ctx) return;
-  var h1 = hero.querySelector('h1'), lede = hero.querySelector('.lede'), cta = hero.querySelector('.hero-cta');
-  var header = document.querySelector('header');
-  if (!h1 || !lede || !cta) return;
+  var grid = hero.querySelector('.equip-grid');
+  if (!grid) return;
   var animated = root.classList.contains('swoop');
 
   var BODY_W = 901, BODY_H = 788, PROP = 330;      // image sizes in source pixels
@@ -940,7 +940,6 @@ document.querySelectorAll('.tab').forEach(function(tab){
   var imgs = ['media/avata2-top-body.webp', 'media/avata2-top-prop-a.webp', 'media/avata2-top-prop-b.webp'].map(function(src){
     var im = new Image(); im.decoding = 'async'; im.src = src; return im;
   });
-  var CLIMB = 0.5;                       // px the drone climbs (relative to the banner) per px scrolled
   var SPIN = 3 * Math.PI / 180;          // propeller turn per px scrolled
   var SHUTTER = 0.8, MAX_SMEAR = 8, MAX_ARC = 110 * Math.PI / 180;   // motion blur limits
   var geo = null, dpr = 1, off = null, octx = null;
@@ -954,20 +953,18 @@ document.querySelectorAll('.tab').forEach(function(tab){
     if (!hero.offsetParent) return;                       // hidden while the terms page is showing
     var W = hero.clientWidth, H = hero.clientHeight;
     if (!W || !H) return;
-    var hr = hero.getBoundingClientRect(), r1 = h1.getBoundingClientRect(),
-        rl = lede.getBoundingClientRect(), rc = cta.getBoundingClientRect();
-    var textRight = Math.max(r1.right, rl.right) - hr.left;
-    var textTop = r1.top - hr.top, textBottom = rc.bottom - hr.top;
-    var dw, x, y;
-    if (W > 800 && W - textRight >= 260) {                 // beside the text
-      dw = Math.min(clamp(W * 0.26, 240, 360), W - textRight - 60, (H - 40) * BODY_W / BODY_H);
-      x = textRight + (W - textRight) / 2; y = (textTop + textBottom) / 2;
-    } else {                                               // phones: under the buttons
-      dw = Math.min(W * 0.62, 300);
-      x = W / 2; y = textBottom + (H - textBottom) / 2;
+    var hr = hero.getBoundingClientRect(), gr = grid.getBoundingClientRect();
+    var dw, x;
+    if (W > 680) {                                         // up the right-hand side of the section
+      dw = clamp(W * 0.22, 200, 300);
+      x = gr.left - hr.left + gr.width * 0.75;
+    } else {                                               // phones: straight up the middle
+      dw = Math.min(W * 0.6, 260);
+      x = W / 2;
     }
-    var k = dw / BODY_W;
-    geo = {W: W, H: H, x: x, y: y, k: k, dw: dw, dh: BODY_H * k};
+    var k = dw / BODY_W, dh = BODY_H * k;
+    // starts just below the bottom edge, then climbs 1px (relative to the section) for every 1px scrolled
+    geo = {W: W, H: H, x: x, y: H + dh / 2 + 4, climb: 1, k: k, dw: dw, dh: dh};
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     var cw = Math.round(W * dpr), ch = Math.round(H * dpr);
     if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
@@ -977,9 +974,9 @@ document.querySelectorAll('.tab').forEach(function(tab){
     if (off.width !== ow || off.height !== oh) { off.width = ow; off.height = oh; }
   }
 
+  // how far you've scrolled since the bottom of the section came up past 95% of the screen height
   function scrolled(){
-    var top = header ? header.offsetHeight : 0;
-    return animated ? Math.max(0, top - hero.getBoundingClientRect().top) : 0;
+    return Math.max(0, window.innerHeight * 0.95 - hero.getBoundingClientRect().bottom);
   }
 
   // the whole drone, centred on (x, y) in the given context, propellers at angle a
@@ -1022,8 +1019,8 @@ document.querySelectorAll('.tab').forEach(function(tab){
     ctx.globalAlpha = 1;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!geo || !ready()) return;
-    var g = geo, y = g.y - CLIMB * d;
-    if (y + g.dh < -20) return;                           // flown out of the banner
+    var g = geo, CLIMB = g.climb, y = g.y - CLIMB * d;
+    if (y + g.dh < -20 || y - g.dh > g.H + 20) return;    // not inside the section
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
     var spanT = clamp(span, -MAX_SMEAR / CLIMB, MAX_SMEAR / CLIMB), spanA = clamp(span, -MAX_ARC / SPIN, MAX_ARC / SPIN);
     var n = clamp(Math.ceil(Math.max(Math.abs(spanT) * CLIMB / 1.5, Math.abs(spanA) * SPIN / 0.1)), 1, 18);
