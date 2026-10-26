@@ -32,14 +32,12 @@
 
   /* Header */
   header{position:sticky; top:0; z-index:10; background:var(--paper); border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top,0px);}
-  .nav{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:18px;}
+  .nav{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:10px;}
   .logotype{font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:1.3rem; letter-spacing:.01em;}
   .logotype span{color:var(--gold-deep);}
   .brand{display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; flex:none;}
-  .brand img{width:46px; height:46px; flex:none; display:block;}
-  .brand .logotype{white-space:nowrap;}
-  @media(max-width:720px){ .brand{gap:10px;} .brand img{width:42px; height:42px;} .brand .logotype{font-size:1.12rem;} }
-  @media(max-width:420px){ .brand .logotype{display:none;} .brand img{width:48px; height:48px;} }
+  .brand img{width:72px; height:72px; flex:none; display:block;}
+  @media(max-width:720px){ .brand img{width:62px; height:62px;} }
   nav.links{display:flex; gap:clamp(14px, 1.9vw, 28px); font-size:.92rem;}
   nav.links a{text-decoration:none; color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px;}
   nav.links a:hover{border-color:var(--gold);}
@@ -246,7 +244,7 @@
 <body>
 <header id="top">
   <div class="wrap nav">
-    <a href="#top" class="brand" aria-label="West Sussex Drone Service, back to top"><img src="media/wsds-logo.svg" alt="" width="46" height="46"><span class="logotype">West Sussex <span>Drone</span> Service</span></a>
+    <a href="#top" class="brand" aria-label="West Sussex Drone Service, back to top"><img src="media/wsds-logo.svg" alt="West Sussex Drone Service" width="72" height="72"></a>
     <nav class="links">
       <a href="#services">Equipment</a>
       <a href="#pricing">Pricing</a>
