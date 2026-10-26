@@ -58,13 +58,29 @@
   .hero-copy{position:relative; z-index:1;}
   .hero h1{font-size:clamp(2.3rem,5vw,3.5rem); line-height:1.05; max-width:11ch;}
 
-  /* Equipment drone: a top-down Avata 2 rises out of the bottom of the Equipment section as you scroll,
-     climbing up through it and out of the top, propellers turning. Drawn on a canvas by the script. */
+  /* Equipment drone: a top-down Avata 2 climbs in its own lane (see script). Computers: text and cards on
+     the left, flight lane on the right, and the section holds still while the drone climbs from its bottom
+     edge to the top. Phones: a flight bay between the intro and the cards. */
   #services{position:relative;}
-  #services > .wrap{position:relative; z-index:1;}
+  .eq-stage{position:relative;}
+  .eq-layout{position:relative; z-index:1;}
+  .eq-lane{position:relative; height:clamp(250px, 50vh, 360px); margin-top:24px;}
   .drone-canvas{position:absolute; left:0; top:0; width:100%; height:100%; z-index:2; pointer-events:none; visibility:hidden;}
   .drone-ready .drone-canvas{visibility:visible;}
-  @media (prefers-reduced-motion:reduce){ .drone-canvas{display:none;} }
+  :root{--eq-h:calc(100vh - var(--hdr, 93px) - 28px); --eq-pin:70vh;}
+  @supports (height:100svh){ :root{--eq-h:calc(100svh - var(--hdr, 93px) - 28px); --eq-pin:70svh;} }
+  @media (min-width:901px){
+    .eq-layout{display:grid; grid-template-columns:minmax(0, 1.55fr) minmax(220px, 1fr); column-gap:56px; align-items:start;}
+    .eq-layout > *{grid-column:1;}
+    .eq-layout > .eq-lane{grid-column:2; grid-row:1 / span 4; height:auto; min-height:200px; margin:0; align-self:stretch;}
+    .eq-layout .equip-grid{grid-template-columns:1fr; gap:16px; margin-top:28px;}
+  }
+  @media (min-width:901px) and (min-height:620px){
+    html.swoop #services{padding:0; height:calc(var(--eq-h) + var(--eq-pin));}
+    html.swoop #services .eq-stage{position:sticky; top:var(--hdr, 93px); height:var(--eq-h); display:flex; align-items:center; overflow:hidden; border-bottom:1px solid var(--line);}
+    html.swoop #services .eq-stage > .wrap{width:100%;}
+    html.swoop #services + .section{border-top:0;}
+  }
   .hero p.lede{color:var(--ink-soft); font-size:1.08rem; max-width:44ch; margin-top:20px;}
   .hero-cta{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;}
   .btn-primary{background:var(--gold-deep); color:#fff; padding:13px 24px; text-decoration:none; border-radius:2px; font-size:.94rem;}
@@ -82,17 +98,18 @@
   /* Equipment */
   .equip-grid{display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:36px;}
   @media(max-width:680px){.equip-grid{grid-template-columns:1fr;}}
-  .equip-card{border:1px solid var(--line); padding:26px; background:var(--paper-raise);}
+  .equip-card{position:relative; overflow:hidden; border:1px solid var(--line); padding:26px; background:var(--paper-raise);}
   .equip-photo{display:block; width:calc(100% + 52px); max-width:none; margin:-26px -26px 20px; aspect-ratio:4/3; object-fit:cover;}
   .equip-card .equip-hint{display:none; color:var(--gold-deep); font-size:.8rem; margin:14px 0 0;}
-  /* On devices with a mouse, the photo stays hidden until the card is hovered or focused. Touch screens keep it visible. */
+  /* On devices with a mouse, the photo fades in over the card when it's hovered or focused, without the card
+     changing size (so nothing around it moves). Touch screens show the photo above the text. */
   @media (hover:hover){
-    .equip-grid{align-items:start;}
     .equip-card{cursor:default;}
-    .equip-card .equip-photo{max-height:0; opacity:0; margin:0 -26px 0; transition:max-height .45s ease, opacity .35s ease, margin .45s ease;}
-    .equip-card:hover .equip-photo, .equip-card:focus-within .equip-photo, .equip-card:focus .equip-photo{max-height:420px; opacity:1; margin:-26px -26px 20px;}
-    .equip-card .equip-hint{display:block; transition:opacity .25s ease;}
-    .equip-card:hover .equip-hint, .equip-card:focus .equip-hint{opacity:0;}
+    .equip-card .equip-photo{position:absolute; inset:0; width:100%; height:100%; margin:0; aspect-ratio:auto; opacity:0; z-index:1; transition:opacity .35s ease;}
+    .equip-card:hover .equip-photo, .equip-card:focus-within .equip-photo, .equip-card:focus .equip-photo{opacity:1;}
+    .equip-card h3{position:relative; z-index:2; transition:text-shadow .35s ease;}
+    .equip-card:hover h3, .equip-card:focus h3{text-shadow:0 1px 10px rgba(0,0,0,.75);}
+    .equip-card .equip-hint{display:block;}
     .equip-card:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
   }
   @media (prefers-reduced-motion:reduce){ .equip-card .equip-photo, .equip-hint{transition:none;} }
@@ -278,13 +295,15 @@
 </section>
 
 <section class="section" id="services">
-  <div class="wrap">
+  <div class="eq-stage">
+  <div class="wrap eq-layout">
     <div class="kicker">Equipment</div>
     <h2>Two aircraft, two kinds of shot</h2>
     <p class="intro">Every job is matched to the right platform — close, dynamic FPV movement or stable cinematic aerials — rather than one drone stretched to cover both.</p>
+    <div class="eq-lane" aria-hidden="true"><canvas class="drone-canvas"></canvas></div>
     <div class="equip-grid">
       <div class="equip-card" tabindex="0">
-        <img class="equip-photo" src="media/drone-avata2.jpg" alt="DJI Avata 2 hovering over a field at dusk with the moon behind" loading="lazy">
+        <img class="equip-photo" src="media/drone-avata2.jpg" style="object-position:center 62%;" alt="DJI Avata 2 hovering over a field at dusk with the moon behind" loading="lazy">
         <h3>DJI Avata 2</h3>
         <p>Flown for immersive, close-proximity FPV footage — sweeping through doorways, along façades and low over ground level. Best suited to dynamic property walk-throughs and energetic event coverage.</p>
         <p class="equip-hint">Hover to see it in flight</p>
@@ -297,7 +316,7 @@
       </div>
     </div>
   </div>
-  <canvas class="drone-canvas" aria-hidden="true"></canvas>
+  </div>
 </section>
 
 <section class="section" id="pricing">
@@ -916,18 +935,20 @@ document.querySelectorAll('.tab').forEach(function(tab){
     el.textContent = 'WSDS holds a UK CAA Flyer ID and Operator ID, is qualified to fly commercially, and is fully insured, with public, products and aviation liability cover that includes invasion of privacy and data liability.';
   }
 })();
-// Equipment drone: a top-down Avata 2, nose up, rises out of the bottom of the Equipment section once
-// that edge is on screen and climbs up through the section and out of the top as you scroll, propellers turning.
-// It is drawn on a canvas so the movement can carry a slight motion blur (several moments of the movement
-// are averaged). With reduced motion it isn't shown.
+// Equipment drone: a top-down Avata 2, nose up, flies in its own lane. On computers the Equipment section
+// holds still while the drone rises out of its bottom edge and climbs to the top, arriving just as the
+// section moves on. On phones it does the same inside a flight bay between the intro and the cards.
+// Its propellers turn as it climbs, and it's drawn on a canvas so the movement can carry a slight motion
+// blur. With reduced motion it simply sits at the top of its lane.
 (function(){
   var root = document.documentElement;
-  var hero = document.getElementById('services');   // the section the drone flies through
-  var canvas = hero ? hero.querySelector('.drone-canvas') : null;
+  var sec = document.getElementById('services');
+  var stage = sec ? sec.querySelector('.eq-stage') : null;
+  var lane = sec ? sec.querySelector('.eq-lane') : null;
+  var canvas = sec ? sec.querySelector('.drone-canvas') : null;
   var ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
-  if (!ctx) return;
-  var grid = hero.querySelector('.equip-grid');
-  if (!grid) return;
+  if (!ctx || !stage || !lane) return;
+  var header = document.querySelector('header');
   var animated = root.classList.contains('swoop');
 
   var BODY_W = 901, BODY_H = 788, PROP = 330;      // image sizes in source pixels
@@ -940,44 +961,56 @@ document.querySelectorAll('.tab').forEach(function(tab){
   var imgs = ['media/avata2-top-body.webp', 'media/avata2-top-prop-a.webp', 'media/avata2-top-prop-b.webp'].map(function(src){
     var im = new Image(); im.decoding = 'async'; im.src = src; return im;
   });
-  var SPIN = 3 * Math.PI / 180;          // propeller turn per px scrolled
-  var SHUTTER = 0.8, MAX_SMEAR = 8, MAX_ARC = 110 * Math.PI / 180;   // motion blur limits
+  var TURNS = 6 * 2 * Math.PI;           // propeller turns over the whole climb
+  var SHUTTER = 0.8, MAX_SMEAR = 10, MAX_ARC = 110 * Math.PI / 180;   // motion blur limits
   var geo = null, dpr = 1, off = null, octx = null;
   var target = 0, current = 0, raf = 0, lastT = 0;
 
   function clamp(v, a, b){ return v < a ? a : (v > b ? b : v); }
   function ready(){ return imgs.every(function(im){ return im.complete && im.naturalWidth; }); }
+  function mq(q){ return window.matchMedia ? window.matchMedia(q).matches : false; }
 
   function measure(){
     geo = null;
-    if (!hero.offsetParent) return;                       // hidden while the terms page is showing
-    var W = hero.clientWidth, H = hero.clientHeight;
+    var hdr = header ? header.offsetHeight : 0;
+    root.style.setProperty('--hdr', hdr + 'px');
+    if (!sec.offsetParent) return;                        // hidden while the terms page is showing
+    var desk = mq('(min-width: 901px)');
+    var host = desk ? stage : lane;                       // computers: the whole section; phones: the flight bay
+    if (canvas.parentNode !== host) host.appendChild(canvas);
+    var W = host.clientWidth, H = host.clientHeight;
     if (!W || !H) return;
-    var hr = hero.getBoundingClientRect(), gr = grid.getBoundingClientRect();
+    var hr = host.getBoundingClientRect(), lr = lane.getBoundingClientRect();
     var dw, x;
-    if (W > 680) {                                         // up the right-hand side of the section
-      dw = clamp(W * 0.22, 200, 300);
-      x = gr.left - hr.left + gr.width * 0.75;
-    } else {                                               // phones: straight up the middle
-      dw = Math.min(W * 0.6, 260);
-      x = W / 2;
-    }
+    if (desk) { dw = clamp(lr.width - 20, 180, 300); x = lr.left - hr.left + lr.width / 2; }
+    else { dw = Math.min(W * 0.62, 260, (H - 24) * BODY_W / BODY_H); x = W / 2; }
     var k = dw / BODY_W, dh = BODY_H * k;
-    // starts just below the bottom edge, then climbs 1px (relative to the section) for every 1px scrolled
-    geo = {W: W, H: H, x: x, y: H + dh / 2 + 4, climb: 1, k: k, dw: dw, dh: dh};
+    var pinned = animated && desk && getComputedStyle(stage).position === 'sticky';
+    var vh = window.innerHeight;
+    // unpinned: starts when the bottom edge is 95% of the way down the screen, ends when the top reaches the header
+    var span = 0.95 * vh - (hdr + 12) - H;
+    geo = {
+      W: W, H: H, x: x, k: k, dw: dw, dh: dh, host: host, pinned: pinned, hdr: hdr,
+      y0: H + dh / 2 + 4,                                 // just below the bottom edge
+      y1: dh / 2 + (desk ? 22 : 8),                       // at the top
+      range: pinned ? Math.max(1, sec.offsetHeight - stage.offsetHeight) : (span > 120 ? span : vh * 0.5)
+    };
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     var cw = Math.round(W * dpr), ch = Math.round(H * dpr);
     if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
-    // scratch canvas for one moment of the motion blur: the drone plus room for its propellers
-    var ow = Math.ceil((geo.dw + 20) * dpr), oh = Math.ceil((geo.dh + 20) * dpr);
+    var ow = Math.ceil((dw + 20) * dpr), oh = Math.ceil((dh + 20) * dpr);
     if (!off) { off = document.createElement('canvas'); octx = off.getContext('2d'); }
     if (off.width !== ow || off.height !== oh) { off.width = ow; off.height = oh; }
   }
 
-  // how far you've scrolled since the bottom of the section came up past 95% of the screen height
-  function scrolled(){
-    return Math.max(0, window.innerHeight * 0.95 - hero.getBoundingClientRect().bottom);
+  function progress(){
+    if (!geo) return 0;
+    if (!animated) return 1;
+    if (geo.pinned) return clamp((geo.hdr - sec.getBoundingClientRect().top) / geo.range, 0, 1);
+    return clamp((0.95 * window.innerHeight - geo.host.getBoundingClientRect().bottom) / geo.range, 0, 1);
   }
+
+  function yAt(p){ var e = 1 - (1 - p) * (1 - p); return geo.y0 + (geo.y1 - geo.y0) * e; }  // slows into the top
 
   // the whole drone, centred on (x, y) in the given context, propellers at angle a
   function drone(c, x, y, a){
@@ -1012,21 +1045,23 @@ document.querySelectorAll('.tab').forEach(function(tab){
     ctx.restore();
   }
 
-  // d: px scrolled; span: how far the scroll moved while the "shutter" was open (0 = sharp)
-  function draw(d, span){
+  // p: progress of the climb (0-1); span: progress covered while the "shutter" was open (0 = sharp)
+  function draw(p, span){
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = 1;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!geo || !ready()) return;
-    var g = geo, CLIMB = g.climb, y = g.y - CLIMB * d;
-    if (y + g.dh < -20 || y - g.dh > g.H + 20) return;    // not inside the section
+    var g = geo, y = yAt(p);
+    if (y - g.dh / 2 > g.H) return;                       // still below the edge
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-    var spanT = clamp(span, -MAX_SMEAR / CLIMB, MAX_SMEAR / CLIMB), spanA = clamp(span, -MAX_ARC / SPIN, MAX_ARC / SPIN);
-    var n = clamp(Math.ceil(Math.max(Math.abs(spanT) * CLIMB / 1.5, Math.abs(spanA) * SPIN / 0.1)), 1, 18);
+    var q = clamp(p - span, 0, 1);
+    var smear = Math.abs(yAt(q) - y), arc = Math.abs(TURNS * (p - q));
+    var fT = smear > MAX_SMEAR ? MAX_SMEAR / smear : 1, fA = arc > MAX_ARC ? MAX_ARC / arc : 1;
+    var n = clamp(Math.ceil(Math.max(smear * fT / 1.5, arc * fA / 0.1)), 1, 18);
     if (n === 1) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drone(ctx, g.x, y, SPIN * d);
+      drone(ctx, g.x, y, TURNS * p);
     } else {
       var ow = off.width, oh = off.height;
       octx.imageSmoothingEnabled = true; octx.imageSmoothingQuality = 'high';
@@ -1037,8 +1072,8 @@ document.querySelectorAll('.tab').forEach(function(tab){
         octx.setTransform(1, 0, 0, 1, 0, 0);
         octx.clearRect(0, 0, ow, oh);
         octx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        drone(octx, ow / dpr / 2, oh / dpr / 2, SPIN * (d - spanA * f));
-        var yi = g.y - CLIMB * (d - spanT * f);
+        drone(octx, ow / dpr / 2, oh / dpr / 2, TURNS * (p - (p - q) * f * fA));
+        var yi = y + (yAt(q) - y) * f * fT;
         ctx.drawImage(off, Math.round(g.x * dpr - ow / 2), Math.round(yi * dpr - oh / 2));
       }
       ctx.globalAlpha = 1;
@@ -1055,7 +1090,7 @@ document.querySelectorAll('.tab').forEach(function(tab){
     lastT = time;
     var before = current;
     current += (target - current) * (1 - Math.exp(-dt / 90)); // eases after the scroll so it glides
-    if (Math.abs(target - current) < 0.3) current = target;
+    if (Math.abs(target - current) < 0.0006) current = target;
     var moving = current !== target;
     draw(current, moving ? (current - before) * SHUTTER : 0);
     if (moving) raf = requestAnimationFrame(frame); else lastT = 0;
@@ -1063,7 +1098,7 @@ document.querySelectorAll('.tab').forEach(function(tab){
 
   function refresh(){
     measure();
-    target = scrolled();
+    target = progress();
     if (!animated) current = target;
     draw(current, 0);
     root.classList.toggle('drone-ready', !!geo && ready());
@@ -1073,14 +1108,15 @@ document.querySelectorAll('.tab').forEach(function(tab){
   imgs.forEach(function(im){ im.addEventListener('load', refresh); });
   if (animated) {
     window.addEventListener('scroll', function(){
-      target = scrolled();
+      target = progress();
       if (!raf) raf = requestAnimationFrame(frame);
     }, {passive: true});
   }
   window.addEventListener('resize', refresh);
-  if ('ResizeObserver' in window) new ResizeObserver(function(){ requestAnimationFrame(refresh); }).observe(hero);
+  if ('ResizeObserver' in window) new ResizeObserver(function(){ requestAnimationFrame(refresh); }).observe(sec);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
-  current = target = scrolled();
+  measure();
+  current = target = progress();
   refresh();
 })();
 // Terms view: "#terms" (or any "#terms-..." section) shows the terms page; anything else shows the main site.
