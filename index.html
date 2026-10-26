@@ -41,9 +41,32 @@
 
   /* Hero */
   .hero{padding:88px 0 70px; position:relative; overflow:hidden;}
+  .hero-stage{position:relative;}
+  .hero-stage > .wrap{width:100%;}
   .hero-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:48px; align-items:center;}
   @media(max-width:800px){.hero-grid{grid-template-columns:1fr;}}
+  .hero-copy{position:relative; z-index:1;}
   .hero h1{font-size:clamp(2.3rem,5vw,3.5rem); line-height:1.05; max-width:11ch;}
+
+  /* Hero drone: the Avata 2 (cut out of our own photo) swoops in from the top-right corner.
+     Its position is set by the script from how far the page has been scrolled; the banner
+     holds still (sticky) while it flies in, then scrolls away as normal. */
+  :root{--hdr:75px; --stage-h:calc(100vh - var(--hdr)); --pin:75vh;}
+  @supports (height:100svh){ :root{--stage-h:calc(100svh - var(--hdr)); --pin:75svh;} }
+  .hero-drone{position:absolute; inset:0; z-index:2; pointer-events:none; visibility:hidden;}
+  .drone-ready .hero-drone{visibility:visible;}
+  .drone-fly{position:absolute; left:0; top:0; width:460px; transform-origin:50% 50%;}
+  .drone-bob{position:relative; animation:drone-bob 3.4s ease-in-out infinite;}
+  .drone-bob img{display:block; width:100%; height:auto;}
+  .drone-glow{position:absolute; left:50%; top:54%; width:180%; height:340%; transform:translate(-50%,-50%); background:radial-gradient(closest-side, rgba(255,176,32,.2), rgba(255,176,32,.1) 30%, rgba(255,176,32,.045) 55%, rgba(255,176,32,.015) 78%, rgba(255,176,32,0));}
+  @keyframes drone-bob{0%,100%{transform:translateY(-2.5%);} 50%{transform:translateY(2.5%);}}
+  html.swoop .hero{padding:0; overflow:visible; height:calc(var(--stage-h) + var(--pin));}
+  html.swoop .hero-stage{position:sticky; top:var(--hdr); height:var(--stage-h); min-height:420px; overflow:hidden; display:grid; align-content:center; background:radial-gradient(55% 50% at 100% 0%, rgba(255,176,32,.08), rgba(255,176,32,0) 70%);}
+  @media(max-width:800px){
+    html.swoop .hero-stage{align-content:start; padding-top:clamp(28px,7vh,64px);}
+    html:not(.swoop) .hero-drone{display:none;}
+  }
+  @media (prefers-reduced-motion:reduce){ .drone-bob{animation:none;} }
   .hero p.lede{color:var(--ink-soft); font-size:1.08rem; max-width:44ch; margin-top:20px;}
   .hero-cta{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;}
   .btn-primary{background:var(--gold-deep); color:#fff; padding:13px 24px; text-decoration:none; border-radius:2px; font-size:.94rem;}
@@ -222,6 +245,7 @@
   }
 </style>
 <style>[hidden]{display:none !important;}</style>
+<script>try{if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('swoop');}catch(e){}</script>
 </head>
 <body>
 <header id="top">
@@ -240,14 +264,22 @@
 </header>
 
 <main id="siteView">
-<section class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <h1>Elevate your perspective</h1>
-      <p class="lede">Aerial photography and cinematic drone video for estate agents, Airbnb hosts, venues and events across West Sussex.</p>
-      <div class="hero-cta">
-        <a href="#contact" class="btn-primary">Free Zoom consultation</a>
-        <a href="#pricing" class="btn-ghost">See pricing</a>
+<section class="hero" id="hero">
+  <div class="hero-stage">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1>Elevate your perspective</h1>
+        <p class="lede">Aerial photography and cinematic drone video for estate agents, Airbnb hosts, venues and events across West Sussex.</p>
+        <div class="hero-cta">
+          <a href="#contact" class="btn-primary">Free Zoom consultation</a>
+          <a href="#pricing" class="btn-ghost">See pricing</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-drone" aria-hidden="true">
+      <div class="drone-fly">
+        <div class="drone-glow"></div>
+        <div class="drone-bob"><img src="media/drone-hero.webp" alt="" width="1600" height="484" decoding="async"></div>
       </div>
     </div>
   </div>
@@ -889,6 +921,110 @@ document.querySelectorAll('.tab').forEach(function(tab){
   if (today >= '2026-11-10') {
     el.textContent = 'WSDS holds a UK CAA Flyer ID and Operator ID, is qualified to fly commercially, and is fully insured, with public, products and aviation liability cover that includes invasion of privacy and data liability.';
   }
+})();
+// Hero drone: flies in from the top-right corner along a curved swoop, driven by the scroll position.
+// The banner stays pinned while it flies (see CSS). With reduced motion it just hovers in place (desktop only).
+(function(){
+  var root = document.documentElement;
+  var hero = document.getElementById('hero');
+  if (!hero) return;
+  var stage = hero.querySelector('.hero-stage');
+  var fly = hero.querySelector('.drone-fly');
+  var glow = hero.querySelector('.drone-glow');
+  var img = fly ? fly.querySelector('img') : null;
+  var h1 = hero.querySelector('h1'), lede = hero.querySelector('.lede'), cta = hero.querySelector('.hero-cta');
+  var header = document.querySelector('header');
+  if (!stage || !fly || !img || !h1 || !lede || !cta) return;
+  var animated = root.classList.contains('swoop');
+  var ASPECT = 484 / 1600, S0 = 0.2;
+  var geo = null, target = animated ? 0 : 1, current = target, raf = 0, lastT = 0;
+
+  function clamp(v, a, b){ return v < a ? a : (v > b ? b : v); }
+
+  function measure(){
+    geo = null;
+    if (!hero.offsetParent) return;                       // hidden while the terms page is showing
+    if (header) root.style.setProperty('--hdr', header.offsetHeight + 'px');
+    var W = stage.clientWidth, H = stage.clientHeight;
+    if (!W || !H) return;
+    var sr = stage.getBoundingClientRect(), hr = h1.getBoundingClientRect(),
+        lr = lede.getBoundingClientRect(), cr = cta.getBoundingClientRect();
+    var textTop = hr.top - sr.top, textBottom = cr.bottom - sr.top;
+    var textRight = Math.max(hr.right, lr.right) - sr.left;
+    var dw, ex, ey;
+    if (W > 800 && W - textRight >= 340) {                 // hover in the space to the right of the text
+      dw = Math.min(clamp(W * 0.36, 300, 620), W - textRight - 40);
+      ex = Math.min(textRight + (W - textRight) / 2, W - dw / 2 - 12);
+      ey = (textTop + textBottom) / 2;
+    } else {                                               // phones and narrow tablets: hover under the buttons
+      var free = H - textBottom;
+      dw = Math.min(W * 0.86, Math.max(380, W * 0.5), (free - 40) / ASPECT);
+      if (dw >= 170) { ex = W / 2; ey = textBottom + free / 2; }
+      else { dw = clamp(W - (hr.right - sr.left) - 28, 110, 180); ex = W - dw / 2 - 10; ey = textTop + (hr.bottom - hr.top) / 2; }
+    }
+    var dh = dw * ASPECT;
+    var sx = W + 0.55 * S0 * dw, sy = -0.55 * S0 * dh;   // just outside the top-right corner
+    fly.style.width = dw + 'px';
+    geo = {
+      W: W, dw: dw, dh: dh,
+      p0: [sx, sy],
+      p1: [sx - 0.15 * W, Math.min(ey + 0.09 * H, H * 0.9)],
+      p2: [ex - 0.6 * Math.min(dw, ex * 0.8), Math.min(ey + 0.34 * H, H - dh * 0.6)],
+      p3: [ex, ey],
+      pin: Math.max(1, hero.offsetHeight - stage.offsetHeight)
+    };
+  }
+
+  function progress(){
+    if (!geo || !animated) return 1;
+    var top = header ? header.offsetHeight : 0;
+    return clamp((top - hero.getBoundingClientRect().top) / geo.pin, 0, 1);
+  }
+
+  function render(p){
+    if (!geo) return;
+    var g = geo, t = 1 - (1 - p) * (1 - p);                // quick dive, gentle arrival
+    var u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
+    var x = a * g.p0[0] + b * g.p1[0] + c * g.p2[0] + d * g.p3[0];
+    var y = a * g.p0[1] + b * g.p1[1] + c * g.p2[1] + d * g.p3[1];
+    var dx = 3 * u * u * (g.p1[0] - g.p0[0]) + 6 * u * t * (g.p2[0] - g.p1[0]) + 3 * t * t * (g.p3[0] - g.p2[0]);
+    var vx = dx * 2 * (1 - p) / g.W;                       // sideways speed per unit of scroll
+    var roll = clamp(27 * vx, -26, 26);                    // bank into the direction of travel
+    var yaw = clamp(-20 * vx, -18, 18);                    // and turn slightly towards it
+    var s = S0 + (1 - S0) * (1 - Math.pow(1 - p, 2.2));    // grows as it closes in
+    fly.style.transform = 'translate(' + (x - g.dw / 2).toFixed(1) + 'px,' + (y - g.dh / 2).toFixed(1) + 'px) perspective(' + Math.round(g.dw * 2.2) + 'px) rotateY(' + yaw.toFixed(2) + 'deg) rotate(' + roll.toFixed(2) + 'deg) scale(' + s.toFixed(4) + ')';
+    if (glow) glow.style.opacity = (0.25 + 0.75 * clamp((p - 0.35) / 0.65, 0, 1)).toFixed(3);
+  }
+
+  function frame(now){
+    raf = 0;
+    var dt = lastT ? Math.min(50, now - lastT) : 16;
+    lastT = now;
+    current += (target - current) * (1 - Math.exp(-dt / 90)); // eases after the scroll so it glides
+    if (Math.abs(target - current) < 0.0005) current = target;
+    render(current);
+    if (current !== target) raf = requestAnimationFrame(frame); else lastT = 0;
+  }
+
+  function refresh(){
+    measure();
+    target = progress();
+    if (!animated) current = target;
+    render(current);
+    root.classList.toggle('drone-ready', !!geo);
+    if (current !== target && !raf) raf = requestAnimationFrame(frame);
+  }
+
+  if (animated) {
+    window.addEventListener('scroll', function(){
+      target = progress();
+      if (!raf) raf = requestAnimationFrame(frame);
+    }, {passive: true});
+  }
+  window.addEventListener('resize', refresh);
+  if ('ResizeObserver' in window) new ResizeObserver(function(){ requestAnimationFrame(refresh); }).observe(hero);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+  refresh();
 })();
 // Terms view: "#terms" (or any "#terms-..." section) shows the terms page; anything else shows the main site.
 (function(){
