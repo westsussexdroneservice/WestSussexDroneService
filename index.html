@@ -1094,9 +1094,18 @@ document.querySelectorAll('.tab').forEach(function(tab){
     if (!a) return;
     var href = a.getAttribute('href');
     if (href.length < 2) return;
-    setTimeout(function(){ route(href); }, 0);
+    setTimeout(function(){
+      route(href);
+      // Section links (#pricing, #contact...) scroll the page but don't stay in the address bar,
+      // so reopening or refreshing the site starts at the top rather than jumping to that section.
+      var h = href.replace('#', '');
+      if (h !== 'terms' && h.indexOf('terms-') !== 0 && window.history && history.replaceState) {
+        setTimeout(function(){ if (location.hash === href) history.replaceState(null, '', location.pathname + location.search); }, 1200);
+      }
+    }, 0);
   });
   window.addEventListener('hashchange', function(){ route(); });
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';   // a refresh starts at the top
   if (location.hash) route();
 })();
 </script>
