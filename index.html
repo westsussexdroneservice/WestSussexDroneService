@@ -36,10 +36,12 @@
   .logotype{font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:1.3rem; letter-spacing:.01em;}
   .logotype span{color:var(--gold-deep);}
   .brand{display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; flex:none;}
-  /* The badge is drawn large at the top of the page and shrinks as you scroll (see script). It is scaled
-     with a transform, so the header bar itself keeps the same height and nothing below it moves. */
-  .brand img{width:56px; height:56px; flex:none; display:block; transform-origin:left top; transform:scale(var(--badge-scale, 1.79)); will-change:transform;}
-  @media(max-width:720px){ .brand img{width:50px; height:50px;} }
+  /* Header shows just the propeller icon; the full badge is in the contact section and footer. */
+  .brand img{width:52px; height:52px; flex:none; display:block;}
+  .badge-contact{display:block; width:112px; height:112px; margin-bottom:22px;}
+  .foot-brand{display:flex; align-items:center;}
+  .foot-brand img{display:block; width:84px; height:84px;}
+  @media(max-width:720px){ .brand img{width:46px; height:46px;} .badge-contact{width:96px; height:96px;} }
   nav.links{display:flex; gap:clamp(14px, 1.9vw, 28px); font-size:.92rem;}
   nav.links a{text-decoration:none; color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px;}
   nav.links a:hover{border-color:var(--gold);}
@@ -246,7 +248,7 @@
 <body>
 <header id="top">
   <div class="wrap nav">
-    <a href="#top" class="brand" aria-label="West Sussex Drone Service, back to top"><img src="media/wsds-logo.svg" alt="West Sussex Drone Service" width="56" height="56"></a>
+    <a href="#top" class="brand" aria-label="West Sussex Drone Service, back to top"><img src="favicon.svg" alt="West Sussex Drone Service" width="52" height="52"></a>
     <nav class="links">
       <a href="#services">Equipment</a>
       <a href="#pricing">Pricing</a>
@@ -479,6 +481,7 @@
 <section class="section" id="contact">
   <div class="wrap contact-grid">
     <div>
+      <img class="badge-contact" src="media/wsds-logo.svg" alt="West Sussex Drone Service" width="112" height="112" loading="lazy">
       <div class="kicker">Get in touch</div>
       <h2>Start with a free consultation</h2>
       <p class="intro" style="margin-bottom:24px;">Every enquiry begins with a free Zoom call — a walkthrough of flight plan ideas and a chance to talk through what you have in mind before any package or subscription is booked.</p>
@@ -765,8 +768,8 @@
 </main>
 
 <footer>
-  <div class="wrap" style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;">
-    <span>West Sussex Drone Service</span>
+  <div class="wrap" style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:16px;">
+    <span class="foot-brand"><img src="media/wsds-logo.svg" alt="West Sussex Drone Service" width="84" height="84" loading="lazy"></span>
     <a class="foot-link" href="#terms">Terms and conditions</a>
     <span>Serving West Sussex &amp; surrounding areas</span>
   </div>
@@ -1082,23 +1085,6 @@ document.querySelectorAll('.tab').forEach(function(tab){
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
   current = target = scrolled();
   refresh();
-})();
-// Header badge: about 100px across at the very top of the page, easing down to its normal size over the
-// first 140px of scrolling.
-(function(){
-  var img = document.querySelector('.brand img');
-  if (!img) return;
-  var raf = 0;
-  function update(){
-    raf = 0;
-    var base = img.offsetWidth || 56, big = Math.min(100, base * 1.8);
-    var t = Math.min(1, Math.max(0, window.scrollY / 140));
-    t = t * t * (3 - 2 * t);
-    img.style.setProperty('--badge-scale', (1 + (big / base - 1) * (1 - t)).toFixed(3));
-  }
-  window.addEventListener('scroll', function(){ if (!raf) raf = requestAnimationFrame(update); }, {passive: true});
-  window.addEventListener('resize', update);
-  update();
 })();
 // Terms view: "#terms" (or any "#terms-..." section) shows the terms page; anything else shows the main site.
 (function(){
