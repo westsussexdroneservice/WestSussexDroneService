@@ -48,25 +48,21 @@
   .hero-copy{position:relative; z-index:1;}
   .hero h1{font-size:clamp(2.3rem,5vw,3.5rem); line-height:1.05; max-width:11ch;}
 
-  /* Hero drone: the Avata 2 (cut out of our own photo) swoops in from the top-right corner.
-     Its position is set by the script from how far the page has been scrolled; the banner
-     holds still (sticky) while it flies in, then scrolls away as normal. */
+  /* Hero drone: an Avata 2 swoops in from the top-right corner, drawn on a canvas by the script
+     from how far the page has been scrolled. The banner holds still (sticky) while it flies in,
+     then scrolls away as normal. */
   :root{--hdr:75px; --stage-h:calc(100vh - var(--hdr)); --pin:75vh;}
   @supports (height:100svh){ :root{--stage-h:calc(100svh - var(--hdr)); --pin:75svh;} }
-  .hero-drone{position:absolute; inset:0; z-index:2; pointer-events:none; visibility:hidden;}
-  .drone-ready .hero-drone{visibility:visible;}
-  .drone-fly{position:absolute; left:0; top:0; width:460px; transform-origin:50% 50%;}
-  .drone-bob{position:relative; animation:drone-bob 3.4s ease-in-out infinite;}
-  .drone-bob img{display:block; width:100%; height:auto;}
-  .drone-glow{position:absolute; left:50%; top:54%; width:180%; height:340%; transform:translate(-50%,-50%); background:radial-gradient(closest-side, rgba(255,176,32,.2), rgba(255,176,32,.1) 30%, rgba(255,176,32,.045) 55%, rgba(255,176,32,.015) 78%, rgba(255,176,32,0));}
-  @keyframes drone-bob{0%,100%{transform:translateY(-2.5%);} 50%{transform:translateY(2.5%);}}
+  .drone-canvas{position:absolute; left:0; top:0; width:100%; height:100%; z-index:2; pointer-events:none; visibility:hidden; animation:drone-bob 3.4s ease-in-out infinite;}
+  .drone-ready .drone-canvas{visibility:visible;}
+  @keyframes drone-bob{0%,100%{transform:translateY(-3px);} 50%{transform:translateY(3px);}}
   html.swoop .hero{padding:0; overflow:visible; height:calc(var(--stage-h) + var(--pin));}
   html.swoop .hero-stage{position:sticky; top:var(--hdr); height:var(--stage-h); min-height:420px; overflow:hidden; display:grid; align-content:center; background:radial-gradient(55% 50% at 100% 0%, rgba(255,176,32,.08), rgba(255,176,32,0) 70%);}
   @media(max-width:800px){
     html.swoop .hero-stage{align-content:start; padding-top:clamp(28px,7vh,64px);}
-    html:not(.swoop) .hero-drone{display:none;}
+    html:not(.swoop) .drone-canvas{display:none;}
   }
-  @media (prefers-reduced-motion:reduce){ .drone-bob{animation:none;} }
+  @media (prefers-reduced-motion:reduce){ .drone-canvas{animation:none;} }
   .hero p.lede{color:var(--ink-soft); font-size:1.08rem; max-width:44ch; margin-top:20px;}
   .hero-cta{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;}
   .btn-primary{background:var(--gold-deep); color:#fff; padding:13px 24px; text-decoration:none; border-radius:2px; font-size:.94rem;}
@@ -276,12 +272,7 @@
         </div>
       </div>
     </div>
-    <div class="hero-drone" aria-hidden="true">
-      <div class="drone-fly">
-        <div class="drone-glow"></div>
-        <div class="drone-bob"><img src="media/drone-hero.webp" alt="" width="1600" height="484" decoding="async"></div>
-      </div>
-    </div>
+    <canvas class="drone-canvas" aria-hidden="true"></canvas>
   </div>
 </section>
 
@@ -922,24 +913,33 @@ document.querySelectorAll('.tab').forEach(function(tab){
     el.textContent = 'WSDS holds a UK CAA Flyer ID and Operator ID, is qualified to fly commercially, and is fully insured, with public, products and aviation liability cover that includes invasion of privacy and data liability.';
   }
 })();
-// Hero drone: flies in from the top-right corner along a curved swoop, driven by the scroll position.
-// The banner stays pinned while it flies (see CSS). With reduced motion it just hovers in place (desktop only).
+// Hero drone: an Avata 2 swoops in from the top-right corner as the page scrolls, nose pointing the way
+// it is flying, then turns to face the visitor as it settles into a hover. It is drawn on a canvas so it
+// can carry a slight motion blur while it moves (several positions along its recent path are averaged).
+// The banner stays pinned while it flies (see CSS). With reduced motion it just hovers (desktop only).
 (function(){
   var root = document.documentElement;
   var hero = document.getElementById('hero');
-  if (!hero) return;
+  var canvas = hero ? hero.querySelector('.drone-canvas') : null;
+  var ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
+  if (!ctx) return;
   var stage = hero.querySelector('.hero-stage');
-  var fly = hero.querySelector('.drone-fly');
-  var glow = hero.querySelector('.drone-glow');
-  var img = fly ? fly.querySelector('img') : null;
   var h1 = hero.querySelector('h1'), lede = hero.querySelector('.lede'), cta = hero.querySelector('.hero-cta');
   var header = document.querySelector('header');
-  if (!stage || !fly || !img || !h1 || !lede || !cta) return;
+  if (!stage || !h1 || !lede || !cta) return;
   var animated = root.classList.contains('swoop');
-  var ASPECT = 484 / 1600, S0 = 0.2;
-  var geo = null, target = animated ? 0 : 1, current = target, raf = 0, lastT = 0;
+
+  // Two views at the same scale: three-quarter (nose to the visitor's left) while flying in, front-on when hovering.
+  var views = [{src: 'media/avata2-threeq.webp'}, {src: 'media/avata2-front.webp'}];
+  var FRONT_W = 690, FRONT_ASPECT = 314 / 690;
+  var S0 = 0.2;                       // size when it first appears, as a fraction of the hover size
+  var NOSE = 160 * Math.PI / 180;     // direction the nose points in the three-quarter view (screen angle)
+  var SHUTTER = 9, MAX_BLUR = 16;     // motion blur: "shutter" time in ms, and the longest smear in px
+  var geo = null, dpr = 1, loaded = 0;
+  var target = animated ? 0 : 1, current = target, raf = 0, lastT = 0;
 
   function clamp(v, a, b){ return v < a ? a : (v > b ? b : v); }
+  function smooth(a, b, v){ v = clamp((v - a) / (b - a), 0, 1); return v * v * (3 - 2 * v); }
 
   function measure(){
     geo = null;
@@ -953,26 +953,28 @@ document.querySelectorAll('.tab').forEach(function(tab){
     var textRight = Math.max(hr.right, lr.right) - sr.left;
     var dw, ex, ey;
     if (W > 800 && W - textRight >= 340) {                 // hover in the space to the right of the text
-      dw = Math.min(clamp(W * 0.36, 300, 620), W - textRight - 40);
+      dw = Math.min(clamp(W * 0.33, 280, 440), W - textRight - 40);
       ex = Math.min(textRight + (W - textRight) / 2, W - dw / 2 - 12);
       ey = (textTop + textBottom) / 2;
     } else {                                               // phones and narrow tablets: hover under the buttons
       var free = H - textBottom;
-      dw = Math.min(W * 0.86, Math.max(380, W * 0.5), (free - 40) / ASPECT);
-      if (dw >= 170) { ex = W / 2; ey = textBottom + free / 2; }
-      else { dw = clamp(W - (hr.right - sr.left) - 28, 110, 180); ex = W - dw / 2 - 10; ey = textTop + (hr.bottom - hr.top) / 2; }
+      dw = Math.min(W * 0.84, 380, (free - 40) / FRONT_ASPECT);
+      if (dw >= 160) { ex = W / 2; ey = textBottom + free / 2; }
+      else { dw = clamp(W - (hr.right - sr.left) - 28, 110, 170); ex = W - dw / 2 - 10; ey = textTop + (hr.bottom - hr.top) / 2; }
     }
-    var dh = dw * ASPECT;
-    var sx = W + 0.55 * S0 * dw, sy = -0.55 * S0 * dh;   // just outside the top-right corner
-    fly.style.width = dw + 'px';
+    var dh = dw * FRONT_ASPECT;
+    var sx = W + 0.6 * S0 * dw * 1.06, sy = -0.6 * S0 * dh; // just outside the top-right corner
     geo = {
-      W: W, dw: dw, dh: dh,
+      W: W, H: H, dw: dw, dh: dh,
       p0: [sx, sy],
-      p1: [sx - 0.15 * W, Math.min(ey + 0.09 * H, H * 0.9)],
-      p2: [ex - 0.6 * Math.min(dw, ex * 0.8), Math.min(ey + 0.34 * H, H - dh * 0.6)],
-      p3: [ex, ey],
+      p1: [Math.min(sx - 0.06 * W, W - 0.4 * dw), ey - 0.05 * H], // drop down the right-hand side...
+      p2: [Math.min(ex + 0.5 * (sx - ex), W - 0.45 * dw), Math.min(ey + 0.07 * H, H - dh * 0.6)], // ...sweep in from the right, a little low...
+      p3: [ex, ey],                                          // ...and rise into the hover
       pin: Math.max(1, hero.offsetHeight - stage.offsetHeight)
     };
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var cw = Math.round(W * dpr), ch = Math.round(H * dpr);
+    if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
   }
 
   function progress(){
@@ -981,40 +983,111 @@ document.querySelectorAll('.tab').forEach(function(tab){
     return clamp((top - hero.getBoundingClientRect().top) / geo.pin, 0, 1);
   }
 
-  function render(p){
-    if (!geo) return;
+  function pose(p){
     var g = geo, t = 1 - (1 - p) * (1 - p);                // quick dive, gentle arrival
     var u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
-    var x = a * g.p0[0] + b * g.p1[0] + c * g.p2[0] + d * g.p3[0];
-    var y = a * g.p0[1] + b * g.p1[1] + c * g.p2[1] + d * g.p3[1];
-    var dx = 3 * u * u * (g.p1[0] - g.p0[0]) + 6 * u * t * (g.p2[0] - g.p1[0]) + 3 * t * t * (g.p3[0] - g.p2[0]);
-    var vx = dx * 2 * (1 - p) / g.W;                       // sideways speed per unit of scroll
-    var roll = clamp(27 * vx, -26, 26);                    // bank into the direction of travel
-    var yaw = clamp(-20 * vx, -18, 18);                    // and turn slightly towards it
-    var s = S0 + (1 - S0) * (1 - Math.pow(1 - p, 2.2));    // grows as it closes in
-    fly.style.transform = 'translate(' + (x - g.dw / 2).toFixed(1) + 'px,' + (y - g.dh / 2).toFixed(1) + 'px) perspective(' + Math.round(g.dw * 2.2) + 'px) rotateY(' + yaw.toFixed(2) + 'deg) rotate(' + roll.toFixed(2) + 'deg) scale(' + s.toFixed(4) + ')';
-    if (glow) glow.style.opacity = (0.25 + 0.75 * clamp((p - 0.35) / 0.65, 0, 1)).toFixed(3);
+    var k = 2 * (1 - p);                                   // rate of the time warp
+    var dx = (3 * u * u * (g.p1[0] - g.p0[0]) + 6 * u * t * (g.p2[0] - g.p1[0]) + 3 * t * t * (g.p3[0] - g.p2[0])) * k;
+    var dy = (3 * u * u * (g.p1[1] - g.p0[1]) + 6 * u * t * (g.p2[1] - g.p1[1]) + 3 * t * t * (g.p3[1] - g.p2[1])) * k;
+    var turning = smooth(0.5, 0.78, p);                    // turns to face the visitor near the end:
+    var front = smooth(0.44, 0.56, turning);               // the view swaps while it is side-on (narrowest)
+    var turn = Math.atan2(dy, dx) - NOSE;                  // tilt the nose towards the direction of travel
+    while (turn > Math.PI) turn -= 2 * Math.PI;
+    while (turn < -Math.PI) turn += 2 * Math.PI;
+    var speed = clamp(Math.sqrt(dx * dx + dy * dy) / g.W / 0.5, 0, 1);
+    return {
+      p: p,
+      x: a * g.p0[0] + b * g.p1[0] + c * g.p2[0] + d * g.p3[0],
+      y: a * g.p0[1] + b * g.p1[1] + c * g.p2[1] + d * g.p3[1],
+      s: S0 + (1 - S0) * (1 - Math.pow(1 - p, 2.2)),       // grows as it closes in
+      roll: clamp(0.38 * turn, -0.4, 0.4) * speed * (1 - turning),
+      front: front,
+      squash: 1 - 0.36 * Math.sin(Math.PI * turning)       // narrows mid-turn so the change of view reads as a rotation
+    };
   }
 
-  function frame(now){
+  function drawDrone(ps, alpha){
+    for (var j = 0; j < views.length; j++) {
+      var v = views[j], w = j === 0 ? 1 - ps.front : ps.front;
+      if (w <= 0.001 || !v.ok) continue;
+      var iw = geo.dw * v.img.naturalWidth / FRONT_W, ih = iw * v.img.naturalHeight / v.img.naturalWidth;
+      ctx.globalAlpha = alpha * w;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.translate(ps.x, ps.y);
+      ctx.rotate(ps.roll);
+      ctx.scale(ps.s * ps.squash, ps.s);
+      ctx.drawImage(v.img, -iw / 2, -ih / 2, iw, ih);
+    }
+  }
+
+  function drawGlow(ps){
+    var k = 0.2 * smooth(0.25, 1, ps.p);
+    if (k < 0.002) return;
+    var r = geo.dw * ps.s, ry = Math.min(r * 0.62, geo.H * 0.48); // keep the glow inside the banner
+    ctx.globalAlpha = 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.translate(ps.x, ps.y + geo.dh * ps.s * 0.12);
+    ctx.scale(1, ry / r);
+    var gr = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+    gr.addColorStop(0, 'rgba(255,176,32,' + k.toFixed(3) + ')');
+    gr.addColorStop(0.35, 'rgba(255,176,32,' + (k * 0.5).toFixed(3) + ')');
+    gr.addColorStop(0.7, 'rgba(255,176,32,' + (k * 0.14).toFixed(3) + ')');
+    gr.addColorStop(1, 'rgba(255,176,32,0)');
+    ctx.fillStyle = gr;
+    ctx.fillRect(-r, -r, 2 * r, 2 * r);
+  }
+
+  // span: how much progress the drone covered while the "shutter" was open (0 = sharp)
+  function draw(p, span){
+    if (!geo) return;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    var now = pose(p), n = 1;
+    if (span) {
+      var then = pose(clamp(p - span, 0, 1));
+      var len = Math.sqrt((now.x - then.x) * (now.x - then.x) + (now.y - then.y) * (now.y - then.y));
+      var cap = Math.min(MAX_BLUR, 0.06 * geo.dw * now.s);  // keep it slight, relative to the drone's size
+      if (len > cap) { span *= cap / len; len = cap; }
+      n = clamp(Math.ceil(len / 1.5), 1, 16);
+    }
+    ctx.globalCompositeOperation = n > 1 ? 'lighter' : 'source-over'; // 'lighter' averages the samples
+    for (var i = 0; i < n; i++) drawDrone(n > 1 ? pose(clamp(p - span * i / (n - 1), 0, 1)) : now, 1 / n);
+    ctx.globalCompositeOperation = 'destination-over';                 // glow goes underneath
+    drawGlow(now);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+  }
+
+  function frame(time){
     raf = 0;
-    var dt = lastT ? Math.min(50, now - lastT) : 16;
-    lastT = now;
+    var dt = lastT ? Math.min(50, time - lastT) : 16;
+    lastT = time;
+    var before = current;
     current += (target - current) * (1 - Math.exp(-dt / 90)); // eases after the scroll so it glides
     if (Math.abs(target - current) < 0.0005) current = target;
-    render(current);
-    if (current !== target) raf = requestAnimationFrame(frame); else lastT = 0;
+    var moving = current !== target;
+    draw(current, moving ? (current - before) / dt * SHUTTER : 0);
+    if (moving) raf = requestAnimationFrame(frame); else lastT = 0;
   }
 
   function refresh(){
     measure();
     target = progress();
     if (!animated) current = target;
-    render(current);
-    root.classList.toggle('drone-ready', !!geo);
+    draw(current, 0);
+    root.classList.toggle('drone-ready', !!geo && loaded === views.length);
     if (current !== target && !raf) raf = requestAnimationFrame(frame);
   }
 
+  views.forEach(function(v){
+    v.img = new Image();
+    v.img.decoding = 'async';
+    v.img.onload = function(){ v.ok = true; loaded++; refresh(); };
+    v.img.src = v.src;
+  });
   if (animated) {
     window.addEventListener('scroll', function(){
       target = progress();
