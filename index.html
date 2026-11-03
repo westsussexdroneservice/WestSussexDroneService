@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Aerial photography and cinematic drone video for estate agents, Airbnb hosts, venues and events across West Sussex.">
-<title>West Sussex Drone Service</title>
+<title>Drone Visuals</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -40,12 +40,16 @@
   .brand img{width:72px; height:72px; flex:none; display:block;}
   .badge-contact{display:block; width:112px; height:112px; margin-bottom:22px;}
   .foot-brand{display:flex; align-items:center;}
-  .foot-brand img{display:block; width:84px; height:84px;}
+  .foot-brand .dv-logo{width:84px; height:84px;}
+  .dv-logo{position:relative; display:block; container-type:inline-size;}
+  .dv-logo img{display:block; width:100%; height:100%;}
+  .dv-name{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:8.6cqw; line-height:1.04; color:#f2efe8;}
+  .dv-name span:first-child{color:#ffb020;}
   @media(max-width:720px){ .brand img{width:60px; height:60px;} .badge-contact{width:96px; height:96px;} }
   /* Original title beside the icon, set over two lines so it sits level with the icon. Hidden on small phones. */
   .brand-name{display:flex; flex-direction:column; font-size:1.55rem; line-height:.98; white-space:nowrap;}
   .brand-name .l1, .brand-name .l2{color:var(--ink);}
-  .brand-name .l2 span{color:var(--gold-deep);}
+  .brand-name .l1 span{color:var(--gold-deep);}
   @media(max-width:1080px){ .brand-name{font-size:1.35rem;} nav.links{gap:14px; font-size:1rem;} }
   @media(max-width:900px){ nav.links{gap:12px; font-size:.92rem;} .book-btn{padding:8px 14px; font-size:.92rem;} }
   @media(max-width:720px){ .brand{gap:10px;} .brand-name{font-size:1.3rem;} }
@@ -274,7 +278,7 @@
 <body>
 <header id="top">
   <div class="wrap nav">
-    <a href="#top" class="brand" aria-label="West Sussex Drone Service, back to top"><img src="favicon.svg" alt="" width="52" height="52"><span class="logotype brand-name"><span class="l1">West Sussex</span> <span class="l2"><span>Drone</span> Service</span></span></a>
+    <a href="#top" class="brand" aria-label="Drone Visuals, back to top"><img src="favicon.svg" alt="" width="52" height="52"><span class="logotype brand-name"><span class="l1"><span>Drone</span></span> <span class="l2">Visuals</span></span></a>
     <nav class="links">
       <a href="#services">Equipment</a>
       <a href="#pricing">Pricing</a>
@@ -395,7 +399,7 @@
         <tr><td>Premium</td><td>All usable footage + full edited video (1–3 min)</td><td>£280</td></tr>
       </table></div>
 
-      <p class="fine"><strong>Portfolio use discount:</strong> agree to let WSDS use a defined selection of your footage for portfolio/marketing and get 5% off your package price (e.g. £500 → £475). Available to every client, including weddings and personal events.</p>
+      <p class="fine"><strong>Portfolio use discount:</strong> agree to let Drone Visuals use a defined selection of your footage for portfolio/marketing and get 5% off your package price (e.g. £500 → £475). Available to every client, including weddings and personal events.</p>
     </div>
 
     <div class="pane" id="addons">
@@ -468,23 +472,23 @@
     <div class="policy-list">
       <div class="policy-row">
         <strong>Insurance &amp; qualification</strong>
-        <p id="insuranceNote">WSDS holds a UK CAA Flyer ID and Operator ID and is qualified to fly commercially.</p>
+        <p id="insuranceNote">Drone Visuals holds a UK CAA Flyer ID and Operator ID and is qualified to fly commercially.</p>
       </div>
       <div class="policy-row">
         <strong>Weather</strong>
-        <p>Free reschedule if conditions aren't safe to fly — no cancellation fee. If conditions turn mid-shoot and WSDS has to leave and return another day, no return call-out fee is charged. Each drone's wind resistance is explained during the free Zoom consultation. Wind speed on site is measured with a handheld wind meter, and if it exceeds those limits during a session, WSDS must stop flying unless conditions are expected to calm down later that day.</p>
+        <p>Free reschedule if conditions aren't safe to fly — no cancellation fee. If conditions turn mid-shoot and Drone Visuals has to leave and return another day, no return call-out fee is charged. Each drone's wind resistance is explained during the free Zoom consultation. Wind speed on site is measured with a handheld wind meter, and if it exceeds those limits during a session, Drone Visuals must stop flying unless conditions are expected to calm down later that day.</p>
       </div>
       <div class="policy-row">
         <strong>Licensing</strong>
-        <p>WSDS keeps the copyright in all footage. Once you have paid in full, you can use your footage for your own marketing or personal use, with no time limit. The full wording is in the <a href="#terms-copyright" style="color:var(--gold-deep);">terms and conditions</a>.</p>
+        <p>Drone Visuals keeps the copyright in all footage. Once you have paid in full, you can use your footage for your own marketing or personal use, with no time limit. The full wording is in the <a href="#terms-copyright" style="color:var(--gold-deep);">terms and conditions</a>.</p>
       </div>
       <div class="policy-row">
         <strong>Rescheduling</strong>
-        <p>Free of charge. If WSDS has already arrived on site for the shoot when you reschedule, the £10 return call-out fee applies, on one-off jobs and subscriptions alike.</p>
+        <p>Free of charge. If Drone Visuals has already arrived on site for the shoot when you reschedule, the £10 return call-out fee applies, on one-off jobs and subscriptions alike.</p>
       </div>
       <div class="policy-row">
         <strong>Cancelling</strong>
-        <p>Free of charge before the shoot. If you cancel while WSDS is on site, the £10 return call-out fee applies. If you cancel after the shoot, you are charged half the package price.</p>
+        <p>Free of charge before the shoot. If you cancel while Drone Visuals is on site, the £10 return call-out fee applies. If you cancel after the shoot, you are charged half the package price.</p>
       </div>
       <div class="policy-row">
         <strong>Add-ons</strong>
@@ -496,11 +500,11 @@
       </div>
       <div class="policy-row">
         <strong>Return call-outs</strong>
-        <p>£10 fee if a one-off job requires WSDS to return to site. Subscription clients are not charged, other than for an on-site reschedule.</p>
+        <p>£10 fee if a one-off job requires Drone Visuals to return to site. Subscription clients are not charged, other than for an on-site reschedule.</p>
       </div>
       <div class="policy-row">
         <strong>Site hazards</strong>
-        <p>WSDS will ask about power lines, overhead cables and any other potential hazards near the property or flying area during the Zoom consultation, so the flight can be planned around them safely.</p>
+        <p>Drone Visuals will ask about power lines, overhead cables and any other potential hazards near the property or flying area during the Zoom consultation, so the flight can be planned around them safely.</p>
       </div>
     </div>
   </div>
@@ -509,7 +513,7 @@
 <section class="section" id="contact">
   <div class="wrap contact-grid">
     <div>
-      <img class="badge-contact" src="media/wsds-logo.svg" alt="West Sussex Drone Service" width="112" height="112" loading="lazy">
+      <span class="dv-logo badge-contact" role="img" aria-label="Drone Visuals logo"><img src="media/drone-visuals-logo.svg" alt="" width="112" height="112" loading="lazy"><span class="dv-name" aria-hidden="true"><span>Drone</span><span>Visuals</span></span></span>
       <div class="kicker">Get in touch</div>
       <h2>Start with a free consultation</h2>
       <p class="intro" style="margin-bottom:24px;">Every enquiry begins with a free Zoom call — a walkthrough of flight plan ideas and a chance to talk through what you have in mind before any package or subscription is booked.</p>
@@ -552,7 +556,7 @@
       <span class="chip gold">Working draft</span>
       <span>Last updated 7 October 2026. Not yet in force.</span>
     </div>
-    <p class="terms-intro">These are the terms for working with West Sussex Drone Service. Sections 1 to 9 are settled. Section 10, on refunds, is still being decided and lists every option under consideration.</p>
+    <p class="terms-intro">These are the terms for working with Drone Visuals. Sections 1 to 9 are settled. Section 10, on refunds, is still being decided and lists every option under consideration.</p>
 
     <div class="terms-layout">
       <nav class="terms-toc" aria-label="Terms contents">
@@ -655,7 +659,7 @@
         <section class="clause-group" id="terms-copyright">
           <h2><span class="n">9</span>Copyright and use of footage</h2>
           <ol class="clauses">
-            <li><span class="n">9.1</span><span><strong>Ownership.</strong> West Sussex Drone Service owns the copyright in all photos and video we produce, including raw and unedited footage. Paying for a shoot does not transfer the copyright to you.</span></li>
+            <li><span class="n">9.1</span><span><strong>Ownership.</strong> Drone Visuals owns the copyright in all photos and video we produce, including raw and unedited footage. Paying for a shoot does not transfer the copyright to you.</span></li>
             <li><span class="n">9.2</span><span><strong>Your licence.</strong> Once you have paid in full, you may use the delivered footage for your own purposes, with no time limit. For a business, this means your own marketing: listings, website, social media, print and advertising. For an individual, this means personal use, including sharing it and posting it on your own social media.</span></li>
             <li><span class="n">9.3</span><span><strong>Unpaid footage.</strong> You may not use any footage until it has been paid for in full.</span></li>
             <li><span class="n">9.4</span><span><strong>What is not allowed.</strong> Without our written agreement, you may not sell the footage, license it to anyone else, or pass it to another person or business to use for their own purposes.</span></li>
@@ -797,7 +801,7 @@
 
 <footer>
   <div class="wrap" style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:16px;">
-    <span class="foot-brand"><img src="media/wsds-logo.svg" alt="West Sussex Drone Service" width="84" height="84" loading="lazy"></span>
+    <span class="foot-brand"><span class="dv-logo " role="img" aria-label="Drone Visuals logo"><img src="media/drone-visuals-logo.svg" alt="" width="84" height="84" loading="lazy"><span class="dv-name" aria-hidden="true"><span>Drone</span><span>Visuals</span></span></span></span>
     <a class="foot-link" href="#terms">Terms and conditions</a>
     <span>Serving West Sussex &amp; surrounding areas</span>
   </div>
@@ -941,7 +945,7 @@ document.querySelectorAll('.tab').forEach(function(tab){
   try { today = new Intl.DateTimeFormat('en-CA', {timeZone:'Europe/London', year:'numeric', month:'2-digit', day:'2-digit'}).format(new Date()); }
   catch (e) { var d = new Date(); today = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2); }
   if (today >= '2026-11-10') {
-    el.textContent = 'WSDS holds a UK CAA Flyer ID and Operator ID, is qualified to fly commercially, and is fully insured, with public, products and aviation liability cover that includes invasion of privacy and data liability.';
+    el.textContent = 'Drone Visuals holds a UK CAA Flyer ID and Operator ID, is qualified to fly commercially, and is fully insured, with public, products and aviation liability cover that includes invasion of privacy and data liability.';
   }
 })();
 // Equipment drone: a top-down Avata 2, nose up, flies in its own lane. On computers the Equipment section
