@@ -113,6 +113,50 @@ input::placeholder,textarea::placeholder{color:#8496a8}
     .options .chip{grid-column:2; justify-self:start;}
   }
 
+
+  /* Subscriptions: type and billing switches, cards that drop down their details on hover or tap. */
+  .dv-sub-bar{display:flex; flex-wrap:wrap; gap:14px 28px; align-items:flex-end; margin-bottom:14px;}
+  .dv-sub-ctl{display:flex; flex-direction:column; gap:8px;}
+  .dv-sub-ctl-l{font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#5d6b78;}
+  .dv-seg{display:inline-flex; flex-wrap:wrap; gap:4px; padding:4px; border-radius:980px; background:#e1e7eb;}
+  .dv-seg button{height:44px; padding:0 20px; border:0; border-radius:980px; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; background:transparent; color:#0a1a2b; transition:background .2s ease,color .2s ease;}
+  .dv-seg button[aria-pressed="true"]{background:#0a1a2b; color:#fff;}
+  .dv-seg button:not([aria-pressed="true"]):hover{background:rgba(10,26,43,.07);}
+  @media (max-width:520px){.dv-sub-ctl{width:100%;} .dv-seg{flex-wrap:nowrap; width:100%;} .dv-seg button{flex:1 1 auto; padding:0 10px; font-size:14px; white-space:nowrap;}}
+  .dv-subs{align-items:flex-start;}
+  .dv-sub{flex:1 0 300px; scroll-snap-align:start; padding:30px 28px; border-radius:20px; background:#fff; box-shadow:0 1px 2px rgba(10,26,43,.05),0 12px 32px rgba(10,26,43,.07); display:flex; flex-direction:column; gap:18px; transition:box-shadow .3s ease, transform .3s ease;}
+  .dv-sub-toggle{display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; height:46px; padding:0 18px; border:1px solid #d5dde3; border-radius:980px; background:#f4f6f7; color:#0a1a2b; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s ease,border-color .2s ease;}
+  .dv-sub-toggle svg{transition:transform .3s ease; color:#0a6f62;}
+  .dv-sub-drop{display:grid; grid-template-rows:0fr; transition:grid-template-rows .38s ease;}
+  .dv-sub-drop>div{overflow:hidden; min-height:0;}
+  .dv-sub-inner{padding-top:4px; opacity:0; transition:opacity .25s ease;}
+  .dv-sub.open .dv-sub-drop{grid-template-rows:1fr;}
+  .dv-sub.open .dv-sub-inner{opacity:1; transition-delay:.08s;}
+  .dv-sub.open .dv-sub-toggle svg{transform:rotate(180deg);}
+  .dv-sub.open .dv-sub-toggle{border-color:#0a6f62; background:#e8f5f3;}
+  .dv-sub.open{box-shadow:0 1px 2px rgba(10,26,43,.06),0 20px 44px rgba(10,26,43,.12);}
+  @media (hover:hover){
+    .dv-sub:hover{transform:translateY(-3px); box-shadow:0 1px 2px rgba(10,26,43,.06),0 20px 44px rgba(10,26,43,.12);}
+    .dv-sub:hover .dv-sub-drop{grid-template-rows:1fr; transition-delay:.12s;}
+    .dv-sub:hover .dv-sub-inner{opacity:1; transition-delay:.2s;}
+    .dv-sub:hover .dv-sub-toggle svg{transform:rotate(180deg);}
+    .dv-sub:hover .dv-sub-toggle{border-color:#0a6f62; background:#e8f5f3;}
+  }
+  @media (prefers-reduced-motion:reduce){.dv-sub,.dv-sub-drop,.dv-sub-inner,.dv-sub-toggle svg{transition:none !important;} .dv-sub:hover{transform:none;}}
+  .dv-sub-h{font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#0a6f62; margin-bottom:4px;}
+  .dv-sub-rows{display:flex; flex-direction:column; border-bottom:1px solid #e3e8ec;}
+  .dv-sub-row{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:13px 0; border-top:1px solid #e3e8ec;}
+  .dv-sub-row-l{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .dv-sub-lv{font-size:16px; font-weight:600;}
+  .dv-sub-dl{font-size:13px; line-height:1.4; color:#5d6b78;}
+  .dv-sub-row-r{flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end; gap:2px;}
+  .dv-sub-pr{font-size:21px; font-weight:600; letter-spacing:-.02em; line-height:1.2; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .dv-sub-per{font-size:13px; font-weight:500; letter-spacing:0; color:#5d6b78;}
+  .dv-sub-ps{font-size:13px; color:#5d6b78; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .dv-sub-how{list-style:none; margin:6px 0 0; padding:0; display:flex; flex-direction:column; gap:9px;}
+  .dv-sub-how li{display:grid; grid-template-columns:16px minmax(0,1fr); gap:10px; align-items:start; font-size:14px; line-height:1.45; color:#2f3e4c;}
+  .dv-sub-how svg{margin-top:2px;}
+  .dv-sub-cta{display:flex; align-items:center; justify-content:center; height:46px; margin-top:20px; border-radius:980px; background:#0a1a2b; color:#fff; font-size:15px; font-weight:600; text-decoration:none;}
 </style>
 </head>
 <body>
@@ -358,131 +402,127 @@ input::placeholder,textarea::placeholder{color:#8496a8}
       <div style="display: flex; flex-direction: column; gap: 14px; max-width: 900px; margin-bottom: 24px;">
         <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #0a6f62;">Monthly or yearly</div>
         <h2 style="margin: 0; font-size: clamp(32px, 4vw, 54px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance;">Subscriptions. <span style="color: #5d6b78;">For repeat clients.</span></h2>
-        <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4a5866;">Pick how often you need us, then how much editing each shoot gets.</p>
+        <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4a5866;">Choose what you need, then how often. Hover over a plan, or tap it, to see every price and what’s included.</p>
       </div>
-      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-bottom: 12px;">
-        <div style="display: inline-flex; gap: 4px; padding: 4px; border-radius: 980px; background: #e1e7eb;">
-          <button type="button" data-billing="monthly" aria-pressed="true" style="height: 44px; padding: 0 22px; border: 0; border-radius: 980px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; background: #0a1a2b; color: #ffffff;">Monthly</button>
-          <button type="button" data-billing="yearly" aria-pressed="false" style="height: 44px; padding: 0 22px; border: 0; border-radius: 980px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; background: transparent; color: #0a1a2b;">Yearly, save 10%</button>
-        </div>
-        <div style="font-size: 15px; line-height: 1.45; color: #4a5866;"><span data-sub="note">Paid monthly in advance, with a 3-month minimum term.</span></div>
+      <div class="dv-sub-bar">
+        <div class="dv-sub-ctl"><span class="dv-sub-ctl-l">What you need</span><div class="dv-seg" role="group"><button type="button" data-subtype="both" aria-pressed="true">Photo + video</button><button type="button" data-subtype="photo" aria-pressed="false">Photo only</button><button type="button" data-subtype="video" aria-pressed="false">Video only</button></div></div>
+        <div class="dv-sub-ctl"><span class="dv-sub-ctl-l">How you pay</span><div class="dv-seg" role="group"><button type="button" data-billing="monthly" aria-pressed="true">Monthly</button><button type="button" data-billing="yearly" aria-pressed="false">Yearly, save 10%</button></div></div>
       </div>
-      <div class="dv-rail" style="display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: clamp(20px, 5vw, 48px); scrollbar-width: none; margin: 0 calc(-1 * clamp(20px, 5vw, 48px)); padding: 8px clamp(20px, 5vw, 48px) 36px;">
-        <article style="flex: 1 0 300px; scroll-snap-align: start; box-sizing: border-box; padding: 30px 28px; border-radius: 20px; background: #ffffff; box-shadow: 0 1px 2px rgba(10, 26, 43, 0.05), 0 12px 32px rgba(10, 26, 43, 0.07); display: flex; flex-direction: column; gap: 18px;">
+      <div style="font-size: 15px; line-height: 1.45; color: #4a5866; margin-bottom: 12px;"><span data-sub="typeNote">Photos and video from every shoot.</span> <span data-sub="note">Paid monthly in advance, with a 3-month minimum term.</span></div>
+      <div class="dv-rail dv-subs" style="display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: clamp(20px, 5vw, 48px); scrollbar-width: none; margin: 0 calc(-1 * clamp(20px, 5vw, 48px)); padding: 8px clamp(20px, 5vw, 48px) 36px;">
+        <article class="dv-sub" id="sub-s">
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #0a6f62;">3 shoots a month</div>
             <h3 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15;">Starter</h3>
+            <p style="margin: 0; min-height: 63px; font-size: 15px; line-height: 1.4; color: #5d6b78;">For a steady flow of fresh content: a few listings, or a venue that wants something new every month.</p>
           </div>
-          <div style="display: flex; flex-direction: column; border-bottom: 1px solid #e3e8ec;">
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid #e3e8ec;">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                <span style="font-size: 16px; font-weight: 600;">Standard</span>
-                <span style="font-size: 13px; line-height: 1.4; color: #5d6b78;">10 photos + short clip (15s)</span>
-              </div>
-              <div style="flex: 0 0 clamp(128px, 11vw, 152px); display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="s1">£345</span><span style="font-size: 14px; font-weight: 500; letter-spacing: 0; color: #5d6b78;"><span data-sub="per">/month</span></span></span>
-                <span style="font-size: 13px; color: #5d6b78; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="s1e">£115 per shoot</span></span>
-              </div>
-            </div>
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid #e3e8ec;">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                <span style="font-size: 16px; font-weight: 600;">Deluxe</span>
-                <span style="font-size: 13px; line-height: 1.4; color: #5d6b78;">20 photos + highlight reel (45s)</span>
-              </div>
-              <div style="flex: 0 0 clamp(128px, 11vw, 152px); display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="s2">£525</span><span style="font-size: 14px; font-weight: 500; letter-spacing: 0; color: #5d6b78;"><span data-sub="per">/month</span></span></span>
-                <span style="font-size: 13px; color: #5d6b78; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="s2e">£175 per shoot</span></span>
-              </div>
-            </div>
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid #e3e8ec;">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                <span style="font-size: 16px; font-weight: 600;">Premium</span>
-                <span style="font-size: 13px; line-height: 1.4; color: #5d6b78;">All usable shots + full edit (1–3 min)</span>
-              </div>
-              <div style="flex: 0 0 clamp(128px, 11vw, 152px); display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="s3">£915</span><span style="font-size: 14px; font-weight: 500; letter-spacing: 0; color: #5d6b78;"><span data-sub="per">/month</span></span></span>
-                <span style="font-size: 13px; color: #5d6b78; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="s3e">£305 per shoot</span></span>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 13px; font-weight: 600; color: #5d6b78;">From</span>
+            <span style="font-size: 44px; font-weight: 600; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="sf">£345</span><span style="font-size: 16px; font-weight: 500; letter-spacing: 0; color: #5d6b78;" data-sub="per">/month</span></span>
+            <span style="font-size: 14px; color: #5d6b78; font-variant-numeric: tabular-nums;"><span data-sub="sfe">£115 per shoot</span> on Standard</span>
+          </div>
+          <button type="button" class="dv-sub-toggle" aria-expanded="false" aria-controls="sub-s-more"><span>What’s included</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="dv-sub-drop" id="sub-s-more">
+            <div>
+              <div class="dv-sub-inner">
+                <div class="dv-sub-h">Prices per month, by editing level</div>
+                <div class="dv-sub-rows">
+                <div class="dv-sub-row">
+                  <div class="dv-sub-row-l"><span class="dv-sub-lv">Standard</span><span class="dv-sub-dl" data-sub="d1">10 edited photos + short clip (15s)</span></div>
+                  <div class="dv-sub-row-r"><span class="dv-sub-pr"><span data-sub="s1">£345</span><span class="dv-sub-per" data-sub="per">/month</span></span><span class="dv-sub-ps" data-sub="s1e">£115 per shoot</span></div>
+                </div>
+                <div class="dv-sub-row">
+                  <div class="dv-sub-row-l"><span class="dv-sub-lv">Deluxe</span><span class="dv-sub-dl" data-sub="d2">20 edited photos + highlight reel (45s)</span></div>
+                  <div class="dv-sub-row-r"><span class="dv-sub-pr"><span data-sub="s2">£525</span><span class="dv-sub-per" data-sub="per">/month</span></span><span class="dv-sub-ps" data-sub="s2e">£175 per shoot</span></div>
+                </div>
+                <div class="dv-sub-row">
+                  <div class="dv-sub-row-l"><span class="dv-sub-lv">Premium</span><span class="dv-sub-dl" data-sub="d3">All usable shots and footage + full edited video (1–3 min)</span></div>
+                  <div class="dv-sub-row-r"><span class="dv-sub-pr"><span data-sub="s3">£915</span><span class="dv-sub-per" data-sub="per">/month</span></span><span class="dv-sub-ps" data-sub="s3e">£305 per shoot</span></div>
+                </div>
+                </div>
+                <div class="dv-sub-h" style="margin-top: 20px;">How it works</div>
+                <ul class="dv-sub-how"><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>3 shoots every month, booked on dates that suit you</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Choose how much editing each shoot gets: Standard, Deluxe or Premium</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span><span data-sub="bill">Paid monthly in advance, before the month’s shoots</span></span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>3-month minimum term, then stop any time before your next payment</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Unused shoots don’t roll over, unless the weather or our availability stopped one</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Add-ons like golden hour or rush editing can go on any shoot</span></li></ul>
+                <a href="#contact" class="dv-sub-cta">Ask about Starter</a>
               </div>
             </div>
           </div>
         </article>
-        <article style="flex: 1 0 300px; scroll-snap-align: start; box-sizing: border-box; padding: 30px 28px; border-radius: 20px; background: #ffffff; box-shadow: 0 1px 2px rgba(10, 26, 43, 0.05), 0 12px 32px rgba(10, 26, 43, 0.07); display: flex; flex-direction: column; gap: 18px;">
+        <article class="dv-sub" id="sub-g">
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #0a6f62;">5 shoots a month</div>
             <h3 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15;">Growth</h3>
+            <p style="margin: 0; min-height: 63px; font-size: 15px; line-height: 1.4; color: #5d6b78;">For busier estate agents and venues keeping several properties or events up to date.</p>
           </div>
-          <div style="display: flex; flex-direction: column; border-bottom: 1px solid #e3e8ec;">
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid #e3e8ec;">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                <span style="font-size: 16px; font-weight: 600;">Standard</span>
-                <span style="font-size: 13px; line-height: 1.4; color: #5d6b78;">10 photos + short clip (15s)</span>
-              </div>
-              <div style="flex: 0 0 clamp(128px, 11vw, 152px); display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="g1">£650</span><span style="font-size: 14px; font-weight: 500; letter-spacing: 0; color: #5d6b78;"><span data-sub="per">/month</span></span></span>
-                <span style="font-size: 13px; color: #5d6b78; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="g1e">£130 per shoot</span></span>
-              </div>
-            </div>
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid #e3e8ec;">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                <span style="font-size: 16px; font-weight: 600;">Deluxe</span>
-                <span style="font-size: 13px; line-height: 1.4; color: #5d6b78;">20 photos + highlight reel (45s)</span>
-              </div>
-              <div style="flex: 0 0 clamp(128px, 11vw, 152px); display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="g2">£1,000</span><span style="font-size: 14px; font-weight: 500; letter-spacing: 0; color: #5d6b78;"><span data-sub="per">/month</span></span></span>
-                <span style="font-size: 13px; color: #5d6b78; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="g2e">£200 per shoot</span></span>
-              </div>
-            </div>
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid #e3e8ec;">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                <span style="font-size: 16px; font-weight: 600;">Premium</span>
-                <span style="font-size: 13px; line-height: 1.4; color: #5d6b78;">All usable shots + full edit (1–3 min)</span>
-              </div>
-              <div style="flex: 0 0 clamp(128px, 11vw, 152px); display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="g3">£1,725</span><span style="font-size: 14px; font-weight: 500; letter-spacing: 0; color: #5d6b78;"><span data-sub="per">/month</span></span></span>
-                <span style="font-size: 13px; color: #5d6b78; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="g3e">£345 per shoot</span></span>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 13px; font-weight: 600; color: #5d6b78;">From</span>
+            <span style="font-size: 44px; font-weight: 600; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="gf">£650</span><span style="font-size: 16px; font-weight: 500; letter-spacing: 0; color: #5d6b78;" data-sub="per">/month</span></span>
+            <span style="font-size: 14px; color: #5d6b78; font-variant-numeric: tabular-nums;"><span data-sub="gfe">£130 per shoot</span> on Standard</span>
+          </div>
+          <button type="button" class="dv-sub-toggle" aria-expanded="false" aria-controls="sub-g-more"><span>What’s included</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="dv-sub-drop" id="sub-g-more">
+            <div>
+              <div class="dv-sub-inner">
+                <div class="dv-sub-h">Prices per month, by editing level</div>
+                <div class="dv-sub-rows">
+                <div class="dv-sub-row">
+                  <div class="dv-sub-row-l"><span class="dv-sub-lv">Standard</span><span class="dv-sub-dl" data-sub="d1">10 edited photos + short clip (15s)</span></div>
+                  <div class="dv-sub-row-r"><span class="dv-sub-pr"><span data-sub="g1">£650</span><span class="dv-sub-per" data-sub="per">/month</span></span><span class="dv-sub-ps" data-sub="g1e">£130 per shoot</span></div>
+                </div>
+                <div class="dv-sub-row">
+                  <div class="dv-sub-row-l"><span class="dv-sub-lv">Deluxe</span><span class="dv-sub-dl" data-sub="d2">20 edited photos + highlight reel (45s)</span></div>
+                  <div class="dv-sub-row-r"><span class="dv-sub-pr"><span data-sub="g2">£1,000</span><span class="dv-sub-per" data-sub="per">/month</span></span><span class="dv-sub-ps" data-sub="g2e">£200 per shoot</span></div>
+                </div>
+                <div class="dv-sub-row">
+                  <div class="dv-sub-row-l"><span class="dv-sub-lv">Premium</span><span class="dv-sub-dl" data-sub="d3">All usable shots and footage + full edited video (1–3 min)</span></div>
+                  <div class="dv-sub-row-r"><span class="dv-sub-pr"><span data-sub="g3">£1,725</span><span class="dv-sub-per" data-sub="per">/month</span></span><span class="dv-sub-ps" data-sub="g3e">£345 per shoot</span></div>
+                </div>
+                </div>
+                <div class="dv-sub-h" style="margin-top: 20px;">How it works</div>
+                <ul class="dv-sub-how"><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>5 shoots every month, booked on dates that suit you</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Choose how much editing each shoot gets: Standard, Deluxe or Premium</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span><span data-sub="bill">Paid monthly in advance, before the month’s shoots</span></span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>3-month minimum term, then stop any time before your next payment</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Unused shoots don’t roll over, unless the weather or our availability stopped one</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Add-ons like golden hour or rush editing can go on any shoot</span></li></ul>
+                <a href="#contact" class="dv-sub-cta">Ask about Growth</a>
               </div>
             </div>
           </div>
         </article>
-        <article style="flex: 1 0 300px; scroll-snap-align: start; box-sizing: border-box; padding: 30px 28px; border-radius: 20px; background: #ffffff; box-shadow: 0 1px 2px rgba(10, 26, 43, 0.05), 0 12px 32px rgba(10, 26, 43, 0.07); display: flex; flex-direction: column; gap: 18px;">
+        <article class="dv-sub" id="sub-p">
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #0a6f62;">7-shoot monthly minimum</div>
             <h3 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15;">Partner</h3>
+            <p style="margin: 0; min-height: 63px; font-size: 15px; line-height: 1.4; color: #5d6b78;">For high-volume clients who need us out most weeks, with no cap on extra shoots.</p>
           </div>
-          <div style="display: flex; flex-direction: column; border-bottom: 1px solid #e3e8ec;">
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid #e3e8ec;">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                <span style="font-size: 16px; font-weight: 600;">Standard</span>
-                <span style="font-size: 13px; line-height: 1.4; color: #5d6b78;">10 photos + short clip (15s)</span>
-              </div>
-              <div style="flex: 0 0 clamp(128px, 11vw, 152px); display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="p1">£840</span><span style="font-size: 14px; font-weight: 500; letter-spacing: 0; color: #5d6b78;"><span data-sub="per">/month</span></span></span>
-                <span style="font-size: 13px; color: #5d6b78; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="p1e">£120 per shoot</span></span>
-              </div>
-            </div>
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid #e3e8ec;">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                <span style="font-size: 16px; font-weight: 600;">Deluxe</span>
-                <span style="font-size: 13px; line-height: 1.4; color: #5d6b78;">20 photos + highlight reel (45s)</span>
-              </div>
-              <div style="flex: 0 0 clamp(128px, 11vw, 152px); display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="p2">£1,295</span><span style="font-size: 14px; font-weight: 500; letter-spacing: 0; color: #5d6b78;"><span data-sub="per">/month</span></span></span>
-                <span style="font-size: 13px; color: #5d6b78; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="p2e">£185 per shoot</span></span>
-              </div>
-            </div>
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid #e3e8ec;">
-              <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                <span style="font-size: 16px; font-weight: 600;">Premium</span>
-                <span style="font-size: 13px; line-height: 1.4; color: #5d6b78;">All usable shots + full edit (1–3 min)</span>
-              </div>
-              <div style="flex: 0 0 clamp(128px, 11vw, 152px); display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="p3">£2,275</span><span style="font-size: 14px; font-weight: 500; letter-spacing: 0; color: #5d6b78;"><span data-sub="per">/month</span></span></span>
-                <span style="font-size: 13px; color: #5d6b78; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="p3e">£325 per shoot</span></span>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 13px; font-weight: 600; color: #5d6b78;">From</span>
+            <span style="font-size: 44px; font-weight: 600; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums;"><span data-sub="pf">£840</span><span style="font-size: 16px; font-weight: 500; letter-spacing: 0; color: #5d6b78;" data-sub="per">/month</span></span>
+            <span style="font-size: 14px; color: #5d6b78; font-variant-numeric: tabular-nums;"><span data-sub="pfe">£120 per shoot</span> on Standard</span>
+          </div>
+          <button type="button" class="dv-sub-toggle" aria-expanded="false" aria-controls="sub-p-more"><span>What’s included</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="dv-sub-drop" id="sub-p-more">
+            <div>
+              <div class="dv-sub-inner">
+                <div class="dv-sub-h">Prices per month, by editing level</div>
+                <div class="dv-sub-rows">
+                <div class="dv-sub-row">
+                  <div class="dv-sub-row-l"><span class="dv-sub-lv">Standard</span><span class="dv-sub-dl" data-sub="d1">10 edited photos + short clip (15s)</span></div>
+                  <div class="dv-sub-row-r"><span class="dv-sub-pr"><span data-sub="p1">£840</span><span class="dv-sub-per" data-sub="per">/month</span></span><span class="dv-sub-ps" data-sub="p1e">£120 per shoot</span></div>
+                </div>
+                <div class="dv-sub-row">
+                  <div class="dv-sub-row-l"><span class="dv-sub-lv">Deluxe</span><span class="dv-sub-dl" data-sub="d2">20 edited photos + highlight reel (45s)</span></div>
+                  <div class="dv-sub-row-r"><span class="dv-sub-pr"><span data-sub="p2">£1,295</span><span class="dv-sub-per" data-sub="per">/month</span></span><span class="dv-sub-ps" data-sub="p2e">£185 per shoot</span></div>
+                </div>
+                <div class="dv-sub-row">
+                  <div class="dv-sub-row-l"><span class="dv-sub-lv">Premium</span><span class="dv-sub-dl" data-sub="d3">All usable shots and footage + full edited video (1–3 min)</span></div>
+                  <div class="dv-sub-row-r"><span class="dv-sub-pr"><span data-sub="p3">£2,275</span><span class="dv-sub-per" data-sub="per">/month</span></span><span class="dv-sub-ps" data-sub="p3e">£325 per shoot</span></div>
+                </div>
+                </div>
+                <div class="dv-sub-h" style="margin-top: 20px;">How it works</div>
+                <ul class="dv-sub-how"><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>7 shoots every month as a minimum, billed whether all 7 are used or not</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Need more? Every extra shoot is the same per-shoot rate, with no cap</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Choose how much editing each shoot gets: Standard, Deluxe or Premium</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span><span data-sub="bill">Paid monthly in advance, before the month’s shoots</span></span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>3-month minimum term, then stop any time before your next payment</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Unused shoots don’t roll over, unless the weather or our availability stopped one</span></li><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a6f62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Add-ons like golden hour or rush editing can go on any shoot</span></li></ul>
+                <a href="#contact" class="dv-sub-cta">Ask about Partner</a>
               </div>
             </div>
-          </div>        </article>
+          </div>
+        </article>
       </div>
-      <p style="margin: 0; max-width: 900px; font-size: 14px; line-height: 1.55; color: #4a5866;"><span><span data-sub="partnerNote">Partner is billed for 7 shoots every month, whether all 7 are used or not. Each shoot beyond that is billed at the same per-shoot rate, with no cap.</span></span> Unused shoots do not roll over, unless a shoot is missed because of the weather or because Drone Visuals was not available. Subscriptions are open to businesses and individuals. The full details are in the <a href="#terms" style="color: #0a6f62; font-weight: 600;">terms and conditions</a>.</p>
+      <p style="margin: 0; max-width: 900px; font-size: 14px; line-height: 1.55; color: #4a5866;"><span data-sub="partnerNote">Partner is billed for 7 shoots every month, whether all 7 are used or not. Each shoot beyond that is billed at the same per-shoot rate, with no cap.</span> Unused shoots do not roll over, unless a shoot is missed because of the weather or because Drone Visuals was not available. Subscriptions are open to businesses and individuals. The full details are in the <a href="#terms" style="color: #0a6f62; font-weight: 600;">terms and conditions</a>.</p>
     </div>
   </section>
 
@@ -697,6 +737,7 @@ input::placeholder,textarea::placeholder{color:#8496a8}
             <li><span class="n">1.1</span><span>Subscriptions are billed monthly. Starter includes 3 shoots a month, Growth includes 5, and Partner has a 7-shoot monthly minimum with each further shoot at the same per-shoot rate.</span></li>
             <li><span class="n">1.2</span><span>Partner is billed for the 7-shoot minimum every month, whether or not all 7 shoots are used.</span></li>
             <li><span class="n">1.3</span><span>Subscriptions are open to everyone, whether you are a business or an individual.</span></li>
+            <li><span class="n">1.4</span><span>Every subscription comes as photo and video, photo only or video only. The price depends on which you choose and on the editing level (Standard, Deluxe or Premium).</span></li>
           </ol>
         </section>
 
@@ -943,21 +984,31 @@ input::placeholder,textarea::placeholder{color:#8496a8}
     v.muted = true; var p = v.play(); if (p && p.catch) p.catch(function(){});
   } catch (e) {}
 })();
-// Subscriptions: Monthly / Yearly switch.
+// Subscriptions: what-you-need and Monthly / Yearly switches, plus tap-to-open details.
 (function(){
-  var prices = {monthly: {"per": "/month", "note": "Paid monthly in advance, with a 3-month minimum term.", "s1": "£345", "s1e": "£115 per shoot", "s2": "£525", "s2e": "£175 per shoot", "s3": "£915", "s3e": "£305 per shoot", "g1": "£650", "g1e": "£130 per shoot", "g2": "£1,000", "g2e": "£200 per shoot", "g3": "£1,725", "g3e": "£345 per shoot", "p1": "£840", "p1e": "£120 per shoot", "p2": "£1,295", "p2e": "£185 per shoot", "p3": "£2,275", "p3e": "£325 per shoot", "partnerNote": "Partner is billed for 7 shoots every month, whether all 7 are used or not. Each shoot beyond that is billed at the same per-shoot rate, with no cap."}, yearly: {"per": "/year", "note": "Paid once upfront for 12 months, 10% less than paying monthly.", "s1": "£3,726", "s1e": "£103.50 per shoot", "s2": "£5,670", "s2e": "£157.50 per shoot", "s3": "£9,882", "s3e": "£274.50 per shoot", "g1": "£7,020", "g1e": "£117 per shoot", "g2": "£10,800", "g2e": "£180 per shoot", "g3": "£18,630", "g3e": "£310.50 per shoot", "p1": "£9,072", "p1e": "£108 per shoot", "p2": "£13,986", "p2e": "£166.50 per shoot", "p3": "£24,570", "p3e": "£292.50 per shoot", "partnerNote": "Yearly Partner covers 7 shoots a month. Each shoot beyond that is billed at the yearly per-shoot rate, with no cap."}};
-  var btns = document.querySelectorAll('[data-billing]');
-  function show(mode){
-    var t = prices[mode];
-    document.querySelectorAll('[data-sub]').forEach(function(el){ var k = el.getAttribute('data-sub'); if (t[k] != null) el.textContent = t[k]; });
-    btns.forEach(function(b){
-      var on = b.getAttribute('data-billing') === mode;
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
-      b.style.background = on ? '#0a1a2b' : 'transparent';
-      b.style.color = on ? '#ffffff' : '#0a1a2b';
+  var prices = {"both.monthly": {"per": "/month", "note": "Paid monthly in advance, with a 3-month minimum term.", "bill": "Paid monthly in advance, before the month’s shoots", "partnerNote": "Partner is billed for 7 shoots every month, whether all 7 are used or not. Each shoot beyond that is billed at the same per-shoot rate, with no cap.", "typeNote": "Photos and video from every shoot.", "d1": "10 edited photos + short clip (15s)", "d2": "20 edited photos + highlight reel (45s)", "d3": "All usable shots and footage + full edited video (1–3 min)", "s1": "£345", "s1e": "£115 per shoot", "s2": "£525", "s2e": "£175 per shoot", "s3": "£915", "s3e": "£305 per shoot", "sf": "£345", "sfe": "£115 per shoot", "g1": "£650", "g1e": "£130 per shoot", "g2": "£1,000", "g2e": "£200 per shoot", "g3": "£1,725", "g3e": "£345 per shoot", "gf": "£650", "gfe": "£130 per shoot", "p1": "£840", "p1e": "£120 per shoot", "p2": "£1,295", "p2e": "£185 per shoot", "p3": "£2,275", "p3e": "£325 per shoot", "pf": "£840", "pfe": "£120 per shoot"}, "both.yearly": {"per": "/year", "note": "Paid once upfront for 12 months, 10% less than paying monthly.", "bill": "Paid once upfront for 12 months, 10% less than monthly", "partnerNote": "Yearly Partner covers 7 shoots a month. Each shoot beyond that is billed at the yearly per-shoot rate, with no cap.", "typeNote": "Photos and video from every shoot.", "d1": "10 edited photos + short clip (15s)", "d2": "20 edited photos + highlight reel (45s)", "d3": "All usable shots and footage + full edited video (1–3 min)", "s1": "£3,726", "s1e": "£103.50 per shoot", "s2": "£5,670", "s2e": "£157.50 per shoot", "s3": "£9,882", "s3e": "£274.50 per shoot", "sf": "£3,726", "sfe": "£103.50 per shoot", "g1": "£7,020", "g1e": "£117 per shoot", "g2": "£10,800", "g2e": "£180 per shoot", "g3": "£18,630", "g3e": "£310.50 per shoot", "gf": "£7,020", "gfe": "£117 per shoot", "p1": "£9,072", "p1e": "£108 per shoot", "p2": "£13,986", "p2e": "£166.50 per shoot", "p3": "£24,570", "p3e": "£292.50 per shoot", "pf": "£9,072", "pfe": "£108 per shoot"}, "photo.monthly": {"per": "/month", "note": "Paid monthly in advance, with a 3-month minimum term.", "bill": "Paid monthly in advance, before the month’s shoots", "partnerNote": "Partner is billed for 7 shoots every month, whether all 7 are used or not. Each shoot beyond that is billed at the same per-shoot rate, with no cap.", "typeNote": "Edited aerial photos only, no video.", "d1": "10 edited photos", "d2": "20 edited photos", "d3": "All usable shots, edited", "s1": "£255", "s1e": "£85 per shoot", "s2": "£390", "s2e": "£130 per shoot", "s3": "£645", "s3e": "£215 per shoot", "sf": "£255", "sfe": "£85 per shoot", "g1": "£475", "g1e": "£95 per shoot", "g2": "£750", "g2e": "£150 per shoot", "g3": "£1,200", "g3e": "£240 per shoot", "gf": "£475", "gfe": "£95 per shoot", "p1": "£630", "p1e": "£90 per shoot", "p2": "£945", "p2e": "£135 per shoot", "p3": "£1,610", "p3e": "£230 per shoot", "pf": "£630", "pfe": "£90 per shoot"}, "photo.yearly": {"per": "/year", "note": "Paid once upfront for 12 months, 10% less than paying monthly.", "bill": "Paid once upfront for 12 months, 10% less than monthly", "partnerNote": "Yearly Partner covers 7 shoots a month. Each shoot beyond that is billed at the yearly per-shoot rate, with no cap.", "typeNote": "Edited aerial photos only, no video.", "d1": "10 edited photos", "d2": "20 edited photos", "d3": "All usable shots, edited", "s1": "£2,754", "s1e": "£76.50 per shoot", "s2": "£4,212", "s2e": "£117 per shoot", "s3": "£6,966", "s3e": "£193.50 per shoot", "sf": "£2,754", "sfe": "£76.50 per shoot", "g1": "£5,130", "g1e": "£85.50 per shoot", "g2": "£8,100", "g2e": "£135 per shoot", "g3": "£12,960", "g3e": "£216 per shoot", "gf": "£5,130", "gfe": "£85.50 per shoot", "p1": "£6,804", "p1e": "£81 per shoot", "p2": "£10,206", "p2e": "£121.50 per shoot", "p3": "£17,388", "p3e": "£207 per shoot", "pf": "£6,804", "pfe": "£81 per shoot"}, "video.monthly": {"per": "/month", "note": "Paid monthly in advance, with a 3-month minimum term.", "bill": "Paid monthly in advance, before the month’s shoots", "partnerNote": "Partner is billed for 7 shoots every month, whether all 7 are used or not. Each shoot beyond that is billed at the same per-shoot rate, with no cap.", "typeNote": "Edited aerial video only, no photos.", "d1": "Short clip (15s)", "d2": "Highlight reel (45s)", "d3": "All usable footage + full edited video (1–3 min)", "s1": "£210", "s1e": "£70 per shoot", "s2": "£315", "s2e": "£105 per shoot", "s3": "£645", "s3e": "£215 per shoot", "sf": "£210", "sfe": "£70 per shoot", "g1": "£400", "g1e": "£80 per shoot", "g2": "£600", "g2e": "£120 per shoot", "g3": "£1,200", "g3e": "£240 per shoot", "gf": "£400", "gfe": "£80 per shoot", "p1": "£525", "p1e": "£75 per shoot", "p2": "£805", "p2e": "£115 per shoot", "p3": "£1,610", "p3e": "£230 per shoot", "pf": "£525", "pfe": "£75 per shoot"}, "video.yearly": {"per": "/year", "note": "Paid once upfront for 12 months, 10% less than paying monthly.", "bill": "Paid once upfront for 12 months, 10% less than monthly", "partnerNote": "Yearly Partner covers 7 shoots a month. Each shoot beyond that is billed at the yearly per-shoot rate, with no cap.", "typeNote": "Edited aerial video only, no photos.", "d1": "Short clip (15s)", "d2": "Highlight reel (45s)", "d3": "All usable footage + full edited video (1–3 min)", "s1": "£2,268", "s1e": "£63 per shoot", "s2": "£3,402", "s2e": "£94.50 per shoot", "s3": "£6,966", "s3e": "£193.50 per shoot", "sf": "£2,268", "sfe": "£63 per shoot", "g1": "£4,320", "g1e": "£72 per shoot", "g2": "£6,480", "g2e": "£108 per shoot", "g3": "£12,960", "g3e": "£216 per shoot", "gf": "£4,320", "gfe": "£72 per shoot", "p1": "£5,670", "p1e": "£67.50 per shoot", "p2": "£8,694", "p2e": "£103.50 per shoot", "p3": "£17,388", "p3e": "£207 per shoot", "pf": "£5,670", "pfe": "£67.50 per shoot"}};
+  var state = {subtype: 'both', billing: 'monthly'};
+  function show(){
+    var t = prices[state.subtype + '.' + state.billing];
+    document.querySelectorAll('#subscriptions [data-sub]').forEach(function(el){ var k = el.getAttribute('data-sub'); if (t[k] != null) el.textContent = t[k]; });
+    document.querySelectorAll('#subscriptions .dv-sub-h:first-child').forEach(function(el){ el.textContent = state.billing === 'yearly' ? 'Prices per year, by editing level' : 'Prices per month, by editing level'; });
+    ['subtype','billing'].forEach(function(key){
+      document.querySelectorAll('[data-' + key + ']').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-' + key) === state[key] ? 'true' : 'false'); });
     });
   }
-  btns.forEach(function(b){ b.addEventListener('click', function(){ show(b.getAttribute('data-billing')); }); });
+  ['subtype','billing'].forEach(function(key){
+    document.querySelectorAll('[data-' + key + ']').forEach(function(b){ b.addEventListener('click', function(){ state[key] = b.getAttribute('data-' + key); show(); }); });
+  });
+  document.querySelectorAll('.dv-sub').forEach(function(card){
+    var btn = card.querySelector('.dv-sub-toggle');
+    function set(open){ card.classList.toggle('open', open); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+    btn.addEventListener('click', function(){ set(!card.classList.contains('open')); });
+    card.addEventListener('focusin', function(e){ if (e.target !== btn) set(true); });
+    if (window.matchMedia('(hover: hover)').matches){
+      card.addEventListener('mouseenter', function(){ btn.setAttribute('aria-expanded', 'true'); });
+      card.addEventListener('mouseleave', function(){ if (!card.classList.contains('open')) btn.setAttribute('aria-expanded', 'false'); });
+    }
+  });
 })();
 // Portfolio: video tiles preview on hover; any tile opens full screen.
 (function(){
